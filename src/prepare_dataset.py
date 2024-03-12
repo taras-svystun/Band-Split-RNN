@@ -43,7 +43,7 @@ parser.add_argument(
     '--sad-cfg-path',
     type=str,
     required=False,
-    default="./conf/sad/cropgainmix.yaml",
+    default="./conf/sad/default.yaml",
     help="Path to Source Activity Detection config file"
 )
 parser.add_argument(
@@ -120,6 +120,8 @@ def main(
         download=download,
         is_wav=True,
     )
+    print(len(db))
+    
     # initialize Source Activity Detector
     sad_cfg = OmegaConf.load(sad_cfg_path)
     sad = SAD(**sad_cfg)

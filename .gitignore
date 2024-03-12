@@ -5,3 +5,5 @@
 .DS_Store
 .idea/
 **/*.pt
+stems_dataset/
+wav_dataset/
