@@ -37,6 +37,12 @@ class EvaluateProgram:
 
         logger.info("Initializing the dataset...")
         self.dataset = EvalSourceSeparationDataset(mode='test', **self.cfg.test_dataset)
+        
+        print()
+        print(self.cfg.test_dataset)
+        print()
+
+
         logger.info("Initializing the separator...")
         self.cfg['audio_params'] = self.cfg.test_dataset
         self.sep = Separator(self.cfg, None)
