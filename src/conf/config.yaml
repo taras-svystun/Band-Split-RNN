@@ -15,7 +15,7 @@ train_loader:
   batch_size: 5
   num_workers: 4
   shuffle: True
-  drop_last: True
+  drop_last: False
 val_loader:
   batch_size: 5
   num_workers: 4
@@ -25,7 +25,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 5e-2
+  lr: 4e-3
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -49,7 +49,7 @@ logger:
 trainer:
   fast_dev_run: False
   max_epochs: 250
-  check_val_every_n_epoch: 1
+  check_val_every_n_epoch: 5
   num_sanity_val_steps: 5
   log_every_n_steps: 1
   accelerator: "auto"
