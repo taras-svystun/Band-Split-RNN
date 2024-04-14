@@ -84,6 +84,8 @@ def initialize_model(
     model = BandSplitRNN(
         **cfg.model
     )
+    model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
+    print('Loaded model from checkpoint successfully!')
     # initialize optimizer
     if hasattr(cfg, 'opt'):
         opt = instantiate(
@@ -160,6 +162,7 @@ def my_app(cfg: DictConfig) -> None:
         opt, sch,
         cfg
     )
+    
     trainer = pl.Trainer(
         **cfg.trainer,
         logger=logger,
@@ -168,6 +171,8 @@ def my_app(cfg: DictConfig) -> None:
 
     log.info("Starting training...")
     try:
+        print(cfg.ckpt_path)
+        print('=_= ' * 10)
         trainer.fit(
             plmodel,
             train_dataloaders=train_loader,
