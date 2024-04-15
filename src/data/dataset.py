@@ -155,9 +155,13 @@ class SourceSeparationDataset(Dataset):
         )
     
     def get_speech_filelist(self):
+        i = 0
         for filename in tqdm(glob(str(self.file_dir / '../LibriSpeech' / '*.wav'))):
             print(filename)
-            break
+            i += 1
+            if i > 10:
+                break
+
 
         # filelist = []
         # for line in tqdm(open(self.txt_path, 'r').readlines()):
