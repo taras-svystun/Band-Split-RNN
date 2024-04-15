@@ -1,6 +1,7 @@
 import random
 import typing as tp
 from pathlib import Path
+import sys
 
 import torch
 from torch.utils.data import Dataset
@@ -188,6 +189,10 @@ class SourceSeparationDataset(Dataset):
         
         torchaudio.save('../../../datasets/tests/vocals.wav', vocals, sr)
         torchaudio.save('../../../datasets/tests/mix.wav', mix_segment, sr)
+        print()
+        print('I have saved mix and vocals')
+        print()
+        sys.exit()
         
         return (mix_segment, vocals)
 
