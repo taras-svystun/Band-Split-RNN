@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset
 import torchaudio
 from tqdm import tqdm
+from glob import glob
 
 
 class SourceSeparationDataset(Dataset):
@@ -27,6 +28,7 @@ class SourceSeparationDataset(Dataset):
             sr: int = 44100,
             silent_prob: float = 0.1,
             mix_prob: float = 0.1,
+            remixing_ratio = 0.5,
             mix_tgt_too: bool = False,
     ):
         self.file_dir = Path(file_dir)
@@ -50,6 +52,7 @@ class SourceSeparationDataset(Dataset):
         # augmentations
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
+        self.remixing_ratio = remixing_ratio
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
@@ -150,6 +153,33 @@ class SourceSeparationDataset(Dataset):
         return (
             mix_segment, tgt_segment
         )
+    
+    def get_speech_filelist(self):
+        for filename in tqdm(glob(self.file_dir / '../LibriSpeech' / '*.wav')):
+            print(filename)
+            break
+
+        # filelist = []
+        # for line in tqdm(open(self.txt_path, 'r').readlines()):
+        #     file_name, start_idx, end_idx = line.split('\t')
+            
+        #     filepath_template = self.file_dir / "train" / f"{file_name}" / "{}.wav"
+        #     if self.preload_dataset:
+        #         mix_segment, tgt_segment = self.load_files(
+        #             str(filepath_template), (int(start_idx), int(end_idx))
+        #         )
+        #         filelist.append((mix_segment, tgt_segment))
+        #     else:
+        #         filelist.append(
+        #             (str(filepath_template), (int(start_idx), int(end_idx)))
+        #         )
+        # return filelist
+
+    def remix(
+        self,
+        mix_segment: torch.Tensor
+    ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
+        pass
 
     def augment(
             self,
@@ -166,6 +196,11 @@ class SourceSeparationDataset(Dataset):
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
+                )
+            
+            if random.random() < self.remixing_ratio:
+                mix_segment, tgt_segment = self.remix(
+                    mix_segment
                 )
         return mix_segment, tgt_segment
 
@@ -297,3 +332,9 @@ class EvalSourceSeparationDataset(Dataset):
 
     def __len__(self):
         return len(self.filelist)
+
+
+
+
+if __name__ == '__main__':
+    dataset = SourceSeparationDataset('../../../datasets/musdb18hq/')
