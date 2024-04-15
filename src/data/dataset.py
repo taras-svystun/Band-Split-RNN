@@ -29,7 +29,7 @@ class SourceSeparationDataset(Dataset):
             sr: int = 44100,
             silent_prob: float = 0.1,
             mix_prob: float = 0.1,
-            remixing_ratio = 0.5,
+            remixing_ratio: float = 0.5,
             mix_tgt_too: bool = False,
     ):
         self.file_dir = Path(file_dir)
