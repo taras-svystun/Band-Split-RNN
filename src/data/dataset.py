@@ -375,17 +375,17 @@ class EvalSourceSeparationDataset(Dataset):
         fp_mix, fp_tgt = self.filelist[index]
 
         y_mix = self.load_file(fp_mix)
-        print(y_mix.shape)
-        # print(y_mix[].shape)
-        print(self.load_file(fp_tgt).shape)
-        print()
-        print()
-        print()
-        sys.exit()
+        # print(y_mix.shape)
+        # # print(y_mix[].shape)
+        # print(self.load_file(fp_tgt).shape)
+        # print()
+        # print()
+        # print()
+        # sys.exit()
         
 
         if self.mode == 'test':
-            return y_mix, self.load_file(fp_tgt)
+            return y_mix[:, :44_100 * 6 * 3], self.load_file(fp_tgt)[:, :44_100 * 6 * 3]
         else:
             return y_mix, fp_tgt
 
