@@ -4,6 +4,6 @@ is_mono: False
 sr: 44100
 win_size: 3
 hop_size: 0.5
-batch_size: 8
+batch_size: 32
 # window: 'hann'
 window: null
