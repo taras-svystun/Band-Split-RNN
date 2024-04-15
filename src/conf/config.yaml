@@ -35,7 +35,7 @@ opt:
 sch:
     warmup_step: 10
     alpha: 0.1
-    gamma: 0.98
+    gamma: 0.95
 
 ckpt_path: null
 
