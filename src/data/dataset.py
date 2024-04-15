@@ -206,12 +206,12 @@ class SourceSeparationDataset(Dataset):
         vocals = torch.cat(vocal_samples, 1)
         mix_segment += vocals[:, :mix_segment.shape[1]]
 
-        torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
-        torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
-        print()
-        print('I have saved mix and vocals')
-        print()
-        sys.exit()
+        # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
+        # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
+        # print()
+        # print('I have saved mix and vocals')
+        # print()
+        # sys.exit()
         
         return (mix_segment, vocals)
 
@@ -375,6 +375,14 @@ class EvalSourceSeparationDataset(Dataset):
         fp_mix, fp_tgt = self.filelist[index]
 
         y_mix = self.load_file(fp_mix)
+        print(y_mix.shape)
+        # print(y_mix[].shape)
+        print(self.load_file(fp_tgt).shape)
+        print()
+        print()
+        print()
+        sys.exit()
+        
 
         if self.mode == 'test':
             return y_mix, self.load_file(fp_tgt)
