@@ -45,5 +45,5 @@ def compute_SDRs(
     )
     
     si_sdr = ScaleInvariantSignalDistortionRatio()
-    siSDR = si_sdr(y_hat, y_tgt)
+    siSDR = si_sdr(y_hat, y_tgt).item()
     return cSDR, uSDR, siSDR
