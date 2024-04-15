@@ -265,7 +265,7 @@ class EvalSourceSeparationDataset(Dataset):
 
         # files params
         self.in_fp = Path(in_fp)
-        print(self.in_fp)
+        # print(self.in_fp)
         self.out_fp = Path(out_fp) if out_fp is not None else None
         self.target = target
 
@@ -315,7 +315,7 @@ class EvalSourceSeparationDataset(Dataset):
         return filelist
 
     def load_file(self, file_path: str) -> torch.Tensor:
-        print(file_path)
+        # print(file_path)
         assert Path(file_path).is_file(), f"There is no such file - {file_path}."
         y, sr = torchaudio.load(
             file_path,

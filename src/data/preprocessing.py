@@ -106,7 +106,7 @@ class SAD:
         y = self.chunk(y)
         rms = self.calculate_rms(y)
         mask = self.calculate_thresholds(rms)
-        print(mask.shape)
+        # print(mask.shape)
         indices = torch.arange(mask.shape[-1])[mask] * self.step_size
         return indices.tolist()
 

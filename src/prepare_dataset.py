@@ -54,14 +54,14 @@ parser.add_argument(
     default=["vocals"],
     help="Target source. SAD will save salient fragments of vocal audio."
 )
-parser.add_argument(
-    '-d',
-    '--download',
-    # nargs='+',
-    required=False,
-    default=False,
-    help="The flag whether to download the musdb"
-)
+# parser.add_argument(
+#     '-d',
+#     '--download',
+#     # nargs='+',
+#     required=False,
+#     default=False,
+#     help="The flag whether to download the musdb"
+# )
 args = parser.parse_args()
 
 
@@ -109,7 +109,7 @@ def main(
         split: tp.Optional[str],
         targets: tp.List[str],
         sad_cfg_path: DictConfig,
-        download: bool
+        # download: bool
 ) -> None:
     # initialize MUSDB parser
     split = None if subset == 'test' else split
@@ -117,10 +117,10 @@ def main(
         root=db_dir,
         subsets=subset,
         split=split,
-        download=download,
+        download=False,
         is_wav=True,
     )
-    print(len(db))
+    # print(len(db))
     
     # initialize Source Activity Detector
     sad_cfg = OmegaConf.load(sad_cfg_path)
@@ -151,5 +151,5 @@ if __name__ == '__main__':
         args.split,
         args.targets,
         args.sad_cfg_path,
-        args.download
+        # args.download
     )
