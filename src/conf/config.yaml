@@ -25,7 +25,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 1e-3
+  lr: 1e-4
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -48,7 +48,7 @@ logger:
 
 trainer:
   fast_dev_run: False
-  max_epochs: 1000
+  max_epochs: 50
   check_val_every_n_epoch: 10
   num_sanity_val_steps: 5
   log_every_n_steps: 500
