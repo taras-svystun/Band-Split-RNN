@@ -338,3 +338,4 @@ class EvalSourceSeparationDataset(Dataset):
 
 if __name__ == '__main__':
     dataset = SourceSeparationDataset('../../../datasets/musdb18hq/')
+    dataset.get_speech_filelist()
