@@ -187,8 +187,8 @@ class SourceSeparationDataset(Dataset):
         vocals = torch.cat(vocal_samples, 1)
         mix_segment += vocals[:, :mix_segment.shape[1]]
         
-        torchaudio.save('../../../datasets/tests/vocals.wav', vocals, sr)
-        torchaudio.save('../../../datasets/tests/mix.wav', mix_segment, sr)
+        torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
+        torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
         print()
         print('I have saved mix and vocals')
         print()
