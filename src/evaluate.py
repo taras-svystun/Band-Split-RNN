@@ -53,13 +53,15 @@ class EvaluateProgram:
             y_hat = self.sep(y).cpu()
 
             # compute and save metrics
-            cSDR, uSDR = compute_SDRs(y_hat, y_tgt)
+            cSDR, uSDR, siSDR = compute_SDRs(y_hat, y_tgt)
 
             metrics['cSDR'].append(cSDR)
             metrics['uSDR'].append(uSDR)
+            metrics['siSDR'].append(siSDR)
 
         metrics['cSDR'] = np.array(metrics['cSDR'])
         metrics['uSDR'] = np.array(metrics['uSDR'])
+        metrics['siSDR'] = np.array(metrics['siSDR'])
         return metrics
 
     def run(self) -> None:
