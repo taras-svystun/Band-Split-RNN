@@ -39,27 +39,7 @@ class SourceSeparationDataset(Dataset):
 
         if txt_path is None and txt_dir is not None:
             mode = 'train' if self.is_training else 'valid'
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
             self.txt_path = Path(txt_dir) / f"batch_{target}_{mode}.txt"
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
         elif txt_path is not None and txt_dir is None:
             self.txt_path = Path(txt_path)
         else:
@@ -199,7 +179,7 @@ class SourceSeparationDataset(Dataset):
             
             random_scaler = random.uniform(.25, 1.75)
             vocal_sample *= random_scaler
-            
+
             vocal_samples.append(vocal_sample)
             vocal_lengths += vocal_sample.shape[1]
 
