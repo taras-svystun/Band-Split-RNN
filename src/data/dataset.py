@@ -1,11 +1,13 @@
 import random
 import typing as tp
 from pathlib import Path
+import sys
 
 import torch
 from torch.utils.data import Dataset
 import torchaudio
 from tqdm import tqdm
+from glob import glob
 
 
 class SourceSeparationDataset(Dataset):
@@ -27,6 +29,7 @@ class SourceSeparationDataset(Dataset):
             sr: int = 44100,
             silent_prob: float = 0.1,
             mix_prob: float = 0.1,
+            remixing_ratio: float = 0.5,
             mix_tgt_too: bool = False,
     ):
         self.file_dir = Path(file_dir)
@@ -35,7 +38,6 @@ class SourceSeparationDataset(Dataset):
         self.sr = sr
 
         if txt_path is None and txt_dir is not None:
-            print('===========I am in the right place============')
             mode = 'train' if self.is_training else 'valid'
             self.txt_path = Path(txt_dir) / f"batch_{target}_{mode}.txt"
         elif txt_path is not None and txt_dir is None:
@@ -50,6 +52,7 @@ class SourceSeparationDataset(Dataset):
         # augmentations
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
+        self.remixing_ratio = remixing_ratio
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
@@ -150,6 +153,47 @@ class SourceSeparationDataset(Dataset):
         return (
             mix_segment, tgt_segment
         )
+    
+    def get_speech_filelist(self):
+        return [filename for filename in tqdm(glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True))]
+
+    def remix(
+        self,
+        mix_segment: torch.Tensor
+    ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
+        vocal_lengths = 0
+        vocal_samples = []
+        speech_filelist = self.get_speech_filelist()
+        
+        while vocal_lengths < mix_segment.shape[1]:
+            vocal_sample_filename = random.choice(speech_filelist)
+            assert Path(vocal_sample_filename).is_file(), f"There is no such file - {vocal_sample_filename}."
+
+            vocal_sample, sr = torchaudio.load(vocal_sample_filename, channels_first=True)
+            assert sr == self.sr, f"Sampling rate should be equal {self.sr}, not {sr}."
+            if self.is_mono:
+                vocal_sample = torch.mean(vocal_sample, dim=0, keepdim=True)
+            
+            max_norm = vocal_sample.abs().max()
+            vocal_sample /= max_norm
+            
+            random_scaler = random.uniform(.25, 1.75)
+            vocal_sample *= random_scaler
+
+            vocal_samples.append(vocal_sample)
+            vocal_lengths += vocal_sample.shape[1]
+
+        vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
+        mix_segment += vocals
+
+        # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
+        # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
+        # print()
+        # print('I have saved mix and vocals')
+        # print()
+        # sys.exit()
+        
+        return (mix_segment, vocals)
 
     def augment(
             self,
@@ -166,6 +210,11 @@ class SourceSeparationDataset(Dataset):
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
+                )
+            
+            if random.random() < self.remixing_ratio:
+                mix_segment, tgt_segment = self.remix(
+                    mix_segment - tgt_segment
                 )
         return mix_segment, tgt_segment
 
