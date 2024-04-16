@@ -12,12 +12,12 @@ defaults:
 
 # data
 train_loader:
-  batch_size: 6
+  batch_size: 5
   num_workers: 4
   shuffle: True
   drop_last: False
 val_loader:
-  batch_size: 4
+  batch_size: 5
   num_workers: 4
   shuffle: False
   drop_last: False
@@ -51,7 +51,7 @@ trainer:
   max_epochs: 500
   check_val_every_n_epoch: 10
   num_sanity_val_steps: 5
-  log_every_n_steps: 1072
+  log_every_n_steps: 800
   accelerator: "auto"
   devices: 1
   gradient_clip_val: 5
