@@ -155,7 +155,7 @@ class SourceSeparationDataset(Dataset):
         )
     
     def get_speech_filelist(self):
-        return [filename for filename in tqdm(glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True))]
+        return [filename for filename in glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True)]
 
     def remix(
         self,
@@ -163,10 +163,12 @@ class SourceSeparationDataset(Dataset):
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         vocal_lengths = 0
         vocal_samples = []
-        speech_filelist = self.get_speech_filelist()
+        if not hasattr(self, "speech_filelist"):
+            self.speech_filelist = self.get_speech_filelist()
+            
         
         while vocal_lengths < mix_segment.shape[1]:
-            vocal_sample_filename = random.choice(speech_filelist)
+            vocal_sample_filename = random.choice(self.speech_filelist)
             assert Path(vocal_sample_filename).is_file(), f"There is no such file - {vocal_sample_filename}."
 
             vocal_sample, sr = torchaudio.load(vocal_sample_filename, channels_first=True)
