@@ -141,5 +141,5 @@ if __name__ == '__main__':
         args.subset,
         args.split,
         args.targets,
-        args.sad_cfg_path
+        args.sad_cfg_path,
     )

@@ -162,7 +162,6 @@ def my_app(cfg: DictConfig) -> None:
         opt, sch,
         cfg
     )
-
     trainer = pl.Trainer(
         **cfg.trainer,
         logger=logger,
