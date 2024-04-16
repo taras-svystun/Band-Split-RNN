@@ -33,11 +33,11 @@ opt:
 
 # torch.optim.lr_scheduler.LambdaLR
 sch:
-    warmup_step: 1
+    warmup_step: 10
     alpha: 0.1
     gamma: 0.98
 
-ckpt_path: ./logs/bandsplitrnn/2024-03-18_17-51/weights/epoch249-val_usdr7.02.ckpt
+ckpt_path: null
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
@@ -49,9 +49,9 @@ logger:
 trainer:
   fast_dev_run: False
   max_epochs: 500
-  check_val_every_n_epoch: 5
+  check_val_every_n_epoch: 10
   num_sanity_val_steps: 5
-  log_every_n_steps: 1
+  log_every_n_steps: 100
   accelerator: "auto"
   devices: 1
   gradient_clip_val: 5

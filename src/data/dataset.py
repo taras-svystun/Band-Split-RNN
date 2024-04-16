@@ -39,7 +39,7 @@ class SourceSeparationDataset(Dataset):
 
         if txt_path is None and txt_dir is not None:
             mode = 'train' if self.is_training else 'valid'
-            self.txt_path = Path(txt_dir) / f"batch_{target}_{mode}.txt"
+            self.txt_path = Path(txt_dir) / f"{target}_{mode}.txt"
         elif txt_path is not None and txt_dir is None:
             self.txt_path = Path(txt_path)
         else:
@@ -264,7 +264,6 @@ class EvalSourceSeparationDataset(Dataset):
 
         # files params
         self.in_fp = Path(in_fp)
-        print(self.in_fp)
         self.out_fp = Path(out_fp) if out_fp is not None else None
         self.target = target
 
@@ -279,10 +278,9 @@ class EvalSourceSeparationDataset(Dataset):
 
     def get_test_filelist(self) -> tp.List[tp.Tuple[str, str]]:
         filelist = []
-        test_dir = self.in_fp / 'train'
+        test_dir = self.in_fp / self.mode
 
-        for fp in test_dir.glob('*Classic*'):
-            print(fp)
+        for fp in test_dir.glob('*'):
             fp_template = str(fp / "{}.wav")
             fp_mix = fp_template.format('mixture')
             fp_tgt = fp_template.format(self.target)
@@ -314,7 +312,6 @@ class EvalSourceSeparationDataset(Dataset):
         return filelist
 
     def load_file(self, file_path: str) -> torch.Tensor:
-        print(file_path)
         assert Path(file_path).is_file(), f"There is no such file - {file_path}."
         y, sr = torchaudio.load(
             file_path,

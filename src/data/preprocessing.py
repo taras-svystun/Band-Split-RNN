@@ -102,11 +102,9 @@ class SAD:
         """
         Returns start indices of salient regions of audio
         """
-        # print(f'{y.size()=}')
         y = self.chunk(y)
         rms = self.calculate_rms(y)
         mask = self.calculate_thresholds(rms)
-        print(mask.shape)
         indices = torch.arange(mask.shape[-1])[mask] * self.step_size
         return indices.tolist()
 
