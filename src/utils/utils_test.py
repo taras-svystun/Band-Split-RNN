@@ -57,6 +57,6 @@ def compute_SDRs(
         y_hat,
         y_tgt
     )
-    
+    print(cSDR, uSDR, siSDR)
     exit()
     return cSDR, uSDR, siSDR
