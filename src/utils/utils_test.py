@@ -21,6 +21,7 @@ def compute_uSDR(
     den = np.sum(np.square(y_tgt - y_hat), axis=(1, 2))
     num += delta
     den += delta
+    print(num, den)
     return 10 * np.log10(num / den)
 
 
@@ -41,7 +42,8 @@ def compute_SDRs(
     y_tgt = y_tgt.T.unsqueeze(0).numpy()
     print(y_hat.shape)
     print(y_tgt.shape)
-    exit()
+    print('=' * 40)
+    
     
     # bss_eval way
     cSDR, *_ = bss_eval(
@@ -55,4 +57,6 @@ def compute_SDRs(
         y_hat,
         y_tgt
     )
+    
+    exit()
     return cSDR, uSDR, siSDR
