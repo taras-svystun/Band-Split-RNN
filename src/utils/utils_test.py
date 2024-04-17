@@ -41,12 +41,12 @@ def compute_SDRs(
     
     # si_sdr = ScaleInvariantSignalDistortionRatio()
     si_sdr = scale_invariant_signal_distortion_ratio
-    siSDR = si_sdr(y_hat, y_tgt).item()
+    siSDR = si_sdr(y_hat, y_tgt)
     # sdr = SignalDistortionRatio()
     sdr = signal_distortion_ratio
-    SDR = sdr(y_hat, y_tgt).item()
+    SDR = sdr(y_hat, y_tgt)
     # print(f'{siSDR=}\t{SDR=}')
-    print(f'siSDR={si_sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0)).item()}\tSDR={sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0)).item()}')
+    print(f'siSDR={si_sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0))}\tSDR={sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0))}')
     
     
     y_hat = y_hat.T.unsqueeze(0).numpy()
