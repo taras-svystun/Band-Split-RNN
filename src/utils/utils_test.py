@@ -2,12 +2,11 @@ import numpy as np
 import torch
 from museval.metrics import bss_eval
 import typing as tp
-from torchmetrics.audio import ScaleInvariantSignalDistortionRatio, SignalDistortionRatio
-from torchmetrics.functional.audio.sdr import (
-    scale_invariant_signal_distortion_ratio,
-    signal_distortion_ratio
-)
+# from torchmetrics.audio import ScaleInvariantSignalDistortionRatio
+from torchmetrics.functional.audio import scale_invariant_signal_distortion_ratio
 from sys import exit
+
+si_sdr = ScaleInvariantSignalDistortionRatio()
 
 
 def compute_uSDR(
@@ -30,30 +29,24 @@ def compute_uSDR(
 
 
 def compute_SDRs(
-        y_hat: torch.Tensor, y_tgt: torch.Tensor
+        y_hat: torch.Tensor, y_tgt: torch.Tensor,
+        scale_invariant_signal_distortion_ratio=scale_invariant_signal_distortion_ratio
 ) -> tp.Tuple[float, float]:
     """
     Computes cSDR and uSDR as defined in paper
     """
-    print(y_hat.shape)
-    print(y_tgt.shape)
-    print('=' * 40)
+    # print(y_hat.shape)
+    # print(y_tgt.shape)
+    # print('=' * 40)
     
-    # si_sdr = ScaleInvariantSignalDistortionRatio()
-    si_sdr = scale_invariant_signal_distortion_ratio
-    siSDR = si_sdr(y_hat, y_tgt)
-    # sdr = SignalDistortionRatio()
-    sdr = signal_distortion_ratio
-    SDR = sdr(y_hat, y_tgt)
-    # print(f'{siSDR=}\t{SDR=}')
-    print(f'siSDR={si_sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0))}\tSDR={sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0))}')
     
+    siSDR = scale_invariant_signal_distortion_ratio(y_hat.view(-1), y_tgt.view(-1)).item()
     
     y_hat = y_hat.T.unsqueeze(0).numpy()
     y_tgt = y_tgt.T.unsqueeze(0).numpy()
-    print(y_hat.shape)
-    print(y_tgt.shape)
-    print('=' * 40)
+    # print(y_hat.shape)
+    # print(y_tgt.shape)
+    # print('=' * 40)
     
     
     # bss_eval way
@@ -68,6 +61,5 @@ def compute_SDRs(
         y_hat,
         y_tgt
     )
-    print(cSDR, uSDR, siSDR, SDR)
-    exit()
+    print(cSDR, uSDR, siSDR)
     return cSDR, uSDR, siSDR
