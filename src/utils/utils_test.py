@@ -3,6 +3,10 @@ import torch
 from museval.metrics import bss_eval
 import typing as tp
 from torchmetrics.audio import ScaleInvariantSignalDistortionRatio, SignalDistortionRatio
+from torchmetrics.functional.audio.sdr import (
+    scale_invariant_signal_distortion_ratio,
+    signal_distortion_ratio
+)
 from sys import exit
 
 
@@ -35,9 +39,11 @@ def compute_SDRs(
     print(y_tgt.shape)
     print('=' * 40)
     
-    si_sdr = ScaleInvariantSignalDistortionRatio()
+    # si_sdr = ScaleInvariantSignalDistortionRatio()
+    si_sdr = scale_invariant_signal_distortion_ratio
     siSDR = si_sdr(y_hat, y_tgt).item()
-    sdr = SignalDistortionRatio()
+    # sdr = SignalDistortionRatio()
+    sdr = signal_distortion_ratio
     SDR = sdr(y_hat, y_tgt).item()
     # print(f'{siSDR=}\t{SDR=}')
     print(f'siSDR={si_sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0)).item()}\tSDR={sdr(y_hat.unsqueeze(0), y_tgt.unsqueeze(0)).item()}')
