@@ -3,6 +3,7 @@ import torch
 from museval.metrics import bss_eval
 import typing as tp
 from torchmetrics.audio import ScaleInvariantSignalDistortionRatio
+from sys import exit
 
 
 def compute_uSDR(
@@ -29,11 +30,19 @@ def compute_SDRs(
     """
     Computes cSDR and uSDR as defined in paper
     """
+    print(y_hat.shape)
+    print(y_tgt.shape)
+    print('=' * 40)
+    
     si_sdr = ScaleInvariantSignalDistortionRatio()
     siSDR = si_sdr(y_hat, y_tgt).item()
     
     y_hat = y_hat.T.unsqueeze(0).numpy()
     y_tgt = y_tgt.T.unsqueeze(0).numpy()
+    print(y_hat.shape)
+    print(y_tgt.shape)
+    exit()
+    
     # bss_eval way
     cSDR, *_ = bss_eval(
         y_tgt,
@@ -46,5 +55,4 @@ def compute_SDRs(
         y_hat,
         y_tgt
     )
-    
     return cSDR, uSDR, siSDR
