@@ -230,7 +230,7 @@ class SourceSeparationDataset(Dataset):
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
         SNR = random.uniform(1, 25)
         SNR = -1
-        SNR = -25
+        SNR = -15
         SNRs = torch.tensor([SNR] * 2)
         
         torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
@@ -238,7 +238,6 @@ class SourceSeparationDataset(Dataset):
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
         max_norm = mix_segment.abs().max()
         mix_segment /= max_norm
-        print(mix_segment.abs().max())
     
         torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
         torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
