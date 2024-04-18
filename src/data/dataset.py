@@ -6,6 +6,8 @@ import sys
 import torch
 from torch.utils.data import Dataset
 import torchaudio
+import torchaudio.functional as F
+from PIL import Image
 from tqdm import tqdm
 from glob import glob
 
@@ -53,6 +55,7 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
+        self.snr_dbs = torch.tensor([20, 10, 3])
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
@@ -179,21 +182,39 @@ class SourceSeparationDataset(Dataset):
             max_norm = vocal_sample.abs().max()
             vocal_sample /= max_norm
             
-            random_scaler = random.uniform(.25, 1.75)
-            vocal_sample *= random_scaler
+            
+            # random_scaler = random.uniform(.25, 1.75)
+            # vocal_sample *= random_scaler
 
             vocal_samples.append(vocal_sample)
             vocal_lengths += vocal_sample.shape[1]
 
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
-        mix_segment += vocals
-
-        # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
         # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
-        # print()
-        # print('I have saved mix and vocals')
-        # print()
-        # sys.exit()
+        print(mix_segment.shape)
+        mix_segment = F.add_noise(vocals, mix_segment, self.snr_dbs)
+        print(mix_segment.shape)
+        # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
+        # torchaudio.save('../../datasets/tests/mix_with_vocals.wav', mix_segment, sr)
+        print()
+        print('I have saved mix and vocals')
+        print()
+        # F.spectrogram(
+        #     mix_segment,
+        #     self.pad,
+        #     self.window,
+        #     self.n_fft,
+        #     self.hop_length,
+        #     self.win_length,
+        #     self.power,
+        #     self.normalized,
+        #     self.center,
+        #     self.pad_mode,
+        #     self.onesided,
+        # )
+        
+        
+        sys.exit()
         
         return (mix_segment, vocals)
 
