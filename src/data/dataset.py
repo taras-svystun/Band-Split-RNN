@@ -7,6 +7,7 @@ import torch
 from torch.utils.data import Dataset
 import torchaudio
 import torchaudio.functional as F
+import torchaudio.transforms as T
 from PIL import Image
 from tqdm import tqdm
 from glob import glob
@@ -55,7 +56,7 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
-        self.snr_dbs = torch.tensor([20, 10, 3])
+        self.spectrogram = T.Spectrogram(2048, 2048, 512)
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
@@ -224,34 +225,22 @@ class SourceSeparationDataset(Dataset):
             vocal_samples.append(vocal_sample)
             vocal_lengths += vocal_sample.shape[1]
 
+
+
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
-        # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
-        print(mix_segment.shape)
-        print('-' * 50)
         SNR = random.uniform(1, 30)
         SNRs = torch.tensor([SNR] * 2)
-        print(f'{SNR=:.3f}')
+        
+        torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
         
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
-        print(mix_segment.shape)
-        # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
-        # torchaudio.save('../../datasets/tests/mix_with_vocals.wav', mix_segment, sr)
-        print()
-        print('I have saved mix and vocals')
-        print()
-        # F.spectrogram(
-        #     mix_segment,
-        #     self.pad,
-        #     self.window,
-        #     self.n_fft,
-        #     self.hop_length,
-        #     self.win_length,
-        #     self.power,
-        #     self.normalized,
-        #     self.center,
-        #     self.pad_mode,
-        #     self.onesided,
-        # )
+    
+        torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
+        torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
+        
+        
+
+        # spectrogram = self.spectrogram(mix_segment)
         
         
         sys.exit()
