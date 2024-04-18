@@ -189,11 +189,6 @@ class SourceSeparationDataset(Dataset):
         energy_signal = torch.linalg.vector_norm(masked_waveform, ord=2, dim=-1) ** 2  # (*,)
         energy_noise = torch.linalg.vector_norm(masked_noise, ord=2, dim=-1) ** 2  # (*,)
         original_snr_db = 10 * (torch.log10(energy_signal) - torch.log10(energy_noise))
-        print(original_snr_db.shape)
-        print(snr.shape)
-        print()
-        print()
-        print()
         scale = 10 ** ((original_snr_db - snr) / 20.0)  # (*,)
 
         # scale noise
@@ -233,7 +228,11 @@ class SourceSeparationDataset(Dataset):
         # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
         print(mix_segment.shape)
         print('-' * 50)
-        mix_segment = self.add_noise(vocals, mix_segment, self.snr_dbs)
+        SNR = random.uniform(1, 30)
+        SNRs = torch.tensor([SNR] * 2)
+        print(f'{SNR=:.3f}')
+        
+        mix_segment = self.add_noise(vocals, mix_segment, SNRs)
         print(mix_segment.shape)
         # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
         # torchaudio.save('../../datasets/tests/mix_with_vocals.wav', mix_segment, sr)
