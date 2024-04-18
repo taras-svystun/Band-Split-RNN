@@ -3,6 +3,7 @@ import torch
 from museval.metrics import bss_eval
 import typing as tp
 from torchmetrics.audio import ScaleInvariantSignalDistortionRatio
+import torchaudio
 
 
 def compute_uSDR(
@@ -48,3 +49,8 @@ def compute_SDRs(
     )
     
     return cSDR, uSDR, siSDR
+
+if __name__ == '__main__':
+    y_hat = torchaudio.load('../../../datasets/tests/mix_sample_vocals.wav')
+    y_tgt = torchaudio.load('../../../datasets/tests/source_sample.wav')
+    print(compute_SDRs(y_hat, y_tgt))
