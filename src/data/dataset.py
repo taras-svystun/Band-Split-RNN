@@ -241,13 +241,14 @@ class SourceSeparationDataset(Dataset):
         
         
 
-        spectrogram = self.spectrogram(mix_segment.mean(0))
-        print(spectrogram.shape)
-        spec_db = T.AmplitudeToDB(stype="magnitude", top_db=80)(spectrogram)
-        print(spec_db.shape)
+        spec = self.spectrogram(mix_segment.mean(0))
+        print(spec.shape)
+        # spec = T.AmplitudeToDB(stype="magnitude", top_db=80)(spec)
+        # print(spec.shape)
         # _ = plt.imshow(spec_db, aspect="auto", origin="lower")
         
-        img = Image.fromarray(spec_db.numpy()).convert('RGB')
+        img = Image.fromarray(spec.T.numpy()).convert('RGB')
+        # .convert("L")
         img.save('../../datasets/tests/img.png')
         
         
