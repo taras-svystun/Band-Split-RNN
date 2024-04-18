@@ -247,7 +247,7 @@ class SourceSeparationDataset(Dataset):
         print(spec_db.shape)
         # _ = plt.imshow(spec_db, aspect="auto", origin="lower")
         
-        img = Image.fromarray(spec_db.numpy())
+        img = Image.fromarray(spec_db.numpy()).convert('RGB')
         img.save('../../datasets/tests/img.png')
         
         
