@@ -159,6 +159,42 @@ class SourceSeparationDataset(Dataset):
     
     def get_speech_filelist(self):
         return [filename for filename in glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True)]
+    
+    def add_noise(
+        self, waveform: torch.Tensor, noise: torch.Tensor, snr: torch.Tensor, lengths: tp.Optional[torch.Tensor] = None
+    ) -> torch.Tensor:
+        """
+        Copied as is from newer torch version.
+        """
+
+        if not (waveform.ndim - 1 == noise.ndim - 1 == snr.ndim and (lengths is None or lengths.ndim == snr.ndim)):
+            raise ValueError("Input leading dimensions don't match.")
+
+        L = waveform.size(-1)
+
+        if L != noise.size(-1):
+            raise ValueError(f"Length dimensions of waveform and noise don't match (got {L} and {noise.size(-1)}).")
+
+        # compute scale
+        if lengths is not None:
+            mask = torch.arange(0, L, device=lengths.device).expand(waveform.shape) < lengths.unsqueeze(
+                -1
+            )  # (*, L) < (*, 1) = (*, L)
+            masked_waveform = waveform * mask
+            masked_noise = noise * mask
+        else:
+            masked_waveform = waveform
+            masked_noise = noise
+
+        energy_signal = torch.linalg.vector_norm(masked_waveform, ord=2, dim=-1) ** 2  # (*,)
+        energy_noise = torch.linalg.vector_norm(masked_noise, ord=2, dim=-1) ** 2  # (*,)
+        original_snr_db = 10 * (torch.log10(energy_signal) - torch.log10(energy_noise))
+        scale = 10 ** ((original_snr_db - snr) / 20.0)  # (*,)
+
+        # scale noise
+        scaled_noise = scale.unsqueeze(-1) * noise  # (*, 1) * (*, L) = (*, L)
+
+        return waveform + scaled_noise  # (*, L)
 
     def remix(
         self,
@@ -181,8 +217,7 @@ class SourceSeparationDataset(Dataset):
             
             max_norm = vocal_sample.abs().max()
             vocal_sample /= max_norm
-            
-            
+
             # random_scaler = random.uniform(.25, 1.75)
             # vocal_sample *= random_scaler
 
@@ -192,7 +227,7 @@ class SourceSeparationDataset(Dataset):
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
         # torchaudio.save('../../datasets/tests/mix.wav', mix_segment, sr)
         print(mix_segment.shape)
-        mix_segment = F.add_noise(vocals, mix_segment, self.snr_dbs)
+        mix_segment = self.add_noise(vocals, mix_segment, self.snr_dbs)
         print(mix_segment.shape)
         # torchaudio.save('../../datasets/tests/vocals.wav', vocals, sr)
         # torchaudio.save('../../datasets/tests/mix_with_vocals.wav', mix_segment, sr)
