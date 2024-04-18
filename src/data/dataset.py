@@ -278,29 +278,8 @@ class EvalSourceSeparationDataset(Dataset):
 
     def get_test_filelist(self) -> tp.List[tp.Tuple[str, str]]:
         filelist = []
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #
-        #
         test_dir = self.in_fp / 'train'
         for fp in test_dir.glob('*Classic*'):
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            # print(fp)
             fp_template = str(fp / "{}.wav")
             fp_mix = fp_template.format('mixture')
             fp_tgt = fp_template.format(self.target)
@@ -355,16 +334,12 @@ class EvalSourceSeparationDataset(Dataset):
         fp_mix, fp_tgt = self.filelist[index]
 
         y_mix = self.load_file(fp_mix)
-        # print(y_mix.shape)
-        # # print(y_mix[].shape)
-        # print(self.load_file(fp_tgt).shape)
-        # print()
-        # print()
-        # print()
-        # sys.exit()
         
 
         if self.mode == 'test':
+            torchaudio.save('../../datasets/tests/mix_sample.wav', y_mix[:, :44_100 * 6 * 3])
+            torchaudio.save('../../datasets/tests/source_sample.wav', self.load_file(fp_tgt)[:, :44_100 * 6 * 3])
+            sys.exit()
             return y_mix[:, :44_100 * 6 * 3], self.load_file(fp_tgt)[:, :44_100 * 6 * 3]
         else:
             return y_mix, fp_tgt
