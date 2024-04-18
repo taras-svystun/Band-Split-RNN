@@ -56,7 +56,9 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
-        self.spectrogram = T.Spectrogram(n_fft=400, normalized='window')
+        self.spectrogram = T.Spectrogram(n_fft=400,
+                                        #  normalized='window'
+                                         )
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
