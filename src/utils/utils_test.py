@@ -51,6 +51,6 @@ def compute_SDRs(
     return cSDR, uSDR, siSDR
 
 if __name__ == '__main__':
-    y_hat = torchaudio.load('../../../datasets/tests/mix_sample_vocals.wav')
-    y_tgt = torchaudio.load('../../../datasets/tests/source_sample.wav')
+    y_hat, _ = torchaudio.load('../../../datasets/tests/mix_sample_vocals.wav')
+    y_tgt, _ = torchaudio.load('../../../datasets/tests/source_sample.wav')
     print(compute_SDRs(y_hat, y_tgt))
