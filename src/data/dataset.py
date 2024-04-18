@@ -219,32 +219,36 @@ class SourceSeparationDataset(Dataset):
             max_norm = vocal_sample.abs().max()
             vocal_sample /= max_norm
 
-            # random_scaler = random.uniform(.25, 1.75)
-            # vocal_sample *= random_scaler
-
             vocal_samples.append(vocal_sample)
             vocal_lengths += vocal_sample.shape[1]
 
 
 
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
-        SNR = random.uniform(-5, 15)
-        SNR = -1
-        SNR = 15
-        SNRs = torch.tensor([SNR] * 2)
+        # SNR = random.uniform(-5, 15)
+        # SNRs = torch.tensor([SNR] * 2)
+
+        SNRs = torch.tensor([random.uniform(-5, 15)] * 2)
         
-        torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
+        # torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
         
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
         max_norm = mix_segment.abs().max()
         mix_segment /= max_norm
     
-        torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
-        torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
+        # torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
+        # torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
         
         
 
-        # spectrogram = self.spectrogram(mix_segment)
+        spectrogram = self.spectrogram(mix_segment)
+        print(spectrogram.shape)
+        spec_db = T.AmplitudeToDB(stype="magnitude", top_db=80)(spectrogram)
+        print(spec_db.shape)
+        # _ = plt.imshow(spec_db, aspect="auto", origin="lower")
+        
+        # img = Image.fromarray(spec_db.numpy())
+        # img.save('img.png')
         
         
         sys.exit()
