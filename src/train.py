@@ -86,7 +86,7 @@ def initialize_model(
         **cfg.model
     )
     model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
-    log.info("Loaded .pt model")
+    # log.info("Loaded .pt model")
     
     
     
@@ -159,18 +159,30 @@ def my_app(cfg: DictConfig) -> None:
     logger, callbacks = initialize_utils(cfg)
 
     log.info("Initializing Lightning modules.")
-    plmodel = PLModel(
-        model,
-        featurizer, inverse_featurizer,
-        augs,
-        opt, sch,
-        cfg
-    )
+    
     if hasattr(cfg, 'ckpt_path'):
         # state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
         # model = model.load_state_dict(state_dict, strict=True)
-        plmodel = PLModel.load_from_checkpoint(cfg.ckpt_path)
+        plmodel = PLModel.load_from_checkpoint(
+            model,
+            featurizer, inverse_featurizer,
+            augs,
+            opt, sch,
+            cfg,
+            checkpoint_path=cfg.ckpt_path
+        )
         log.info("Loaded .ckpt checkpoint model")
+    else:
+        plmodel = PLModel(
+            model,
+            featurizer, inverse_featurizer,
+            augs,
+            opt, sch,
+            cfg
+        )
+        log.info("Loaded .pt model")
+        
+    
     
     trainer = pl.Trainer(
         **cfg.trainer,
