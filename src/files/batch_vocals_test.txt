@@ -1,5 +1,3 @@
 A Classic Education - NightOwl	0	264600
 A Classic Education - NightOwl	132300	396900
 A Classic Education - NightOwl	264600	529200
-A Classic Education - NightOwl	396900	661500
-A Classic Education - NightOwl	529200	793800
