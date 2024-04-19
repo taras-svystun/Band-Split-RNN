@@ -15,6 +15,7 @@ from torch.optim import Optimizer, lr_scheduler
 
 from data import SourceSeparationDataset, collate_fn
 from model import BandSplitRNN, PLModel
+from utils.utils_inference import load_pl_state_dict
 
 log = logging.getLogger(__name__)
 
@@ -84,8 +85,15 @@ def initialize_model(
     model = BandSplitRNN(
         **cfg.model
     )
-    model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
+    if hasattr(cfg, 'ckpt_path'):
+        state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
+        model = model.load_state_dict(state_dict, strict=True)
+    else:    
+        model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
     print('Loaded model from checkpoint successfully!')
+    
+    
+    
     # initialize optimizer
     if hasattr(cfg, 'opt'):
         opt = instantiate(
