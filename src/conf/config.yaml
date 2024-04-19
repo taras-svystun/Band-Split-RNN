@@ -25,7 +25,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 1e-4
+  lr: 1e-3
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -37,7 +37,8 @@ sch:
     alpha: 0.1
     gamma: 0.998
 
-ckpt_path: logs/bandsplitrnn/2024-04-19_09-18/weights/epoch9399-val_usdr8.68.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-19_09-18/weights/epoch9399-val_usdr8.68.ckpt
+ckpt_path: logs/bandsplitrnn/2024-04-19_16-35/weights/epoch1399-val_usdr11.29.ckpt
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
