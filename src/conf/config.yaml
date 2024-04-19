@@ -37,7 +37,7 @@ sch:
     alpha: 0.1
     gamma: 0.998
 
-ckpt_path: epoch9399-val_usdr8.68.ckpt
+ckpt_path: logs/bandsplitrnn/2024-04-19_09-18/weights/epoch9399-val_usdr8.68.ckpt
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
