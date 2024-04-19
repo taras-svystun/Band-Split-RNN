@@ -1,9 +1,9 @@
 # defaults
 defaults:
   - model: bandsplitrnnV7
-  - train_dataset: default
+  - train_dataset: no_augs
   - val_dataset: default
-  - test_dataset: no_augs
+  - test_dataset: default
   - sad: default
   - augmentations: default
   - featurizer: stft
