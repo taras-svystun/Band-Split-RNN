@@ -66,17 +66,17 @@ class EvaluateProgram:
             
             
             
-            print(cSDR, uSDR, siSDR)
+            # print(cSDR, uSDR, siSDR)
             
-            torchaudio.save(f'../../datasets/tests/overfit/mix{round(uSDR[0])}.wav', y.cpu(), 44100)
-            torchaudio.save(f'../../datasets/tests/overfit/actual_vocals{round(uSDR[0])}.wav', y_tgt, 44100)
-            torchaudio.save(f'../../datasets/tests/overfit/pred_vocals{round(uSDR[0])}.wav', y_hat, 44100)
+            # torchaudio.save(f'../../datasets/tests/overfit/mix{round(uSDR[0])}.wav', y.cpu(), 44100)
+            # torchaudio.save(f'../../datasets/tests/overfit/actual_vocals{round(uSDR[0])}.wav', y_tgt, 44100)
+            # torchaudio.save(f'../../datasets/tests/overfit/pred_vocals{round(uSDR[0])}.wav', y_hat, 44100)
             
-            y_hat, sr = torchaudio.load(f'../../datasets/tests/overfit/pred_vocals{round(uSDR[0])}.wav')
-            y_tgt, sr = torchaudio.load(f'../../datasets/tests/overfit/actual_vocals{round(uSDR[0])}.wav')
+            # y_hat, sr = torchaudio.load(f'../../datasets/tests/overfit/pred_vocals{round(uSDR[0])}.wav')
+            # y_tgt, sr = torchaudio.load(f'../../datasets/tests/overfit/actual_vocals{round(uSDR[0])}.wav')
             
-            cSDR, uSDR, siSDR = compute_SDRs(y_hat, y_tgt)
-            print(cSDR, uSDR, siSDR)
+            # cSDR, uSDR, siSDR = compute_SDRs(y_hat, y_tgt)
+            # print(cSDR, uSDR, siSDR)
             
 
 
