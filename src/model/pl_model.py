@@ -5,6 +5,7 @@ import torch.nn as nn
 import pytorch_lightning as pl
 from torch.optim import Optimizer, lr_scheduler
 from omegaconf import DictConfig
+from model import BandSplitRNN
 
 
 class PLModel(pl.LightningModule):
@@ -19,6 +20,10 @@ class PLModel(pl.LightningModule):
             hparams: DictConfig = None
     ):
         super().__init__()
+        if model is None:
+            model = model = BandSplitRNN(
+                **hparams.model
+            )
 
         # augmentations
         self.augmentations = augmentations

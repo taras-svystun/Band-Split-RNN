@@ -165,7 +165,6 @@ def my_app(cfg: DictConfig) -> None:
         # model = model.load_state_dict(state_dict, strict=True)
         plmodel = PLModel.load_from_checkpoint(
             checkpoint_path=cfg.ckpt_path,
-            model=model,
             featurizer=featurizer, inverse_featurizer=inverse_featurizer,
             augs=augs,
             opt=opt, sch=sch,
