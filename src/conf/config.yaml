@@ -37,7 +37,7 @@ sch:
     alpha: 0.1
     gamma: 0.998
 
-ckpt_path: null
+ckpt_path: epoch9399-val_usdr8.68.ckpt
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
