@@ -155,7 +155,7 @@ class SourceSeparationDataset(Dataset):
         )
     
     def get_speech_filelist(self):
-        return [filename for filename in tqdm(glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True))]
+        return [filename for filename in glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True)]
 
     def remix(
         self,
