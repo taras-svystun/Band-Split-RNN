@@ -56,6 +56,7 @@ class EvaluateProgram:
 
             # compute and save metrics
             cSDR, uSDR, siSDR = compute_SDRs(y_hat, y_tgt)
+            print(uSDR)
             
             metrics['cSDR'].append(cSDR)
             metrics['uSDR'].append(uSDR)

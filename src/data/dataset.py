@@ -340,6 +340,7 @@ class EvalSourceSeparationDataset(Dataset):
             # torchaudio.save('../../datasets/tests/mix_sample.wav', y_mix[:, :44_100 * 6 * 2], 44100)
             # torchaudio.save('../../datasets/tests/source_sample.wav', self.load_file(fp_tgt)[:, :44_100 * 6 * 2], 44100)
             # sys.exit()
+            print(fp_mix)
             return y_mix[:, :44_100 * 6 * 2], self.load_file(fp_tgt)[:, :44_100 * 6 * 2]
         else:
             return y_mix, fp_tgt
