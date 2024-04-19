@@ -3,6 +3,7 @@ import logging
 import typing as tp
 from pathlib import Path
 from collections import defaultdict
+import torchaudio
 
 import numpy as np
 import torch
@@ -46,11 +47,15 @@ class EvaluateProgram:
     def run_one_ckpt(self) -> tp.Dict[str, np.ndarray]:
         metrics = defaultdict(list)
         for y, y_tgt in self.dataset:
+            print('Batch')
             # send to device
             y = y.to(self.device)
 
             # run inference on mixture
             y_hat = self.sep(y).cpu()
+            
+            
+            
 
             # compute and save metrics
             cSDR, uSDR, siSDR = compute_SDRs(y_hat, y_tgt)
