@@ -6,9 +6,6 @@ import sys
 import torch
 from torch.utils.data import Dataset
 import torchaudio
-import torchaudio.functional as F
-import torchaudio.transforms as T
-from PIL import Image
 from tqdm import tqdm
 from glob import glob
 
@@ -32,7 +29,7 @@ class SourceSeparationDataset(Dataset):
             sr: int = 44100,
             silent_prob: float = 0.1,
             mix_prob: float = 0.1,
-            remixing_ratio: float = 0.5,
+            remixing_ratio: float = 0.25,
             mix_tgt_too: bool = False,
     ):
         self.file_dir = Path(file_dir)
@@ -56,9 +53,6 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
-        self.spectrogram = T.Spectrogram(n_fft=400,
-                                        #  normalized='window'
-                                         )
         self.mix_tgt_too = mix_tgt_too
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
@@ -240,21 +234,6 @@ class SourceSeparationDataset(Dataset):
     
         # torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
         # torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
-        
-        
-
-        spec = self.spectrogram(mix_segment.mean(0))
-        print(spec.shape)
-        # spec = T.AmplitudeToDB(stype="magnitude", top_db=80)(spec)
-        # print(spec.shape)
-        # _ = plt.imshow(spec_db, aspect="auto", origin="lower")
-        
-        img = Image.fromarray(spec.T.numpy()).convert('RGB')
-        # .convert("L")
-        img.save('../../datasets/tests/img.png')
-        
-        
-        sys.exit()
         
         return (mix_segment, vocals)
 

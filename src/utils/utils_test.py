@@ -7,9 +7,9 @@ from torchmetrics.audio import ScaleInvariantSignalDistortionRatio
 from sys import exit
 from time import perf_counter
 
-start = perf_counter()
+# start = perf_counter()
 si_sdr = ScaleInvariantSignalDistortionRatio()
-print(f'Elapsed time {perf_counter() - start:.5f}')
+# print(f'Elapsed time {perf_counter() - start:.5f}')
 
 
 def compute_uSDR(
@@ -27,7 +27,6 @@ def compute_uSDR(
     den = np.sum(np.square(y_tgt - y_hat), axis=(1, 2))
     num += delta
     den += delta
-    print(num, den)
     return 10 * np.log10(num / den)
 
 
@@ -64,5 +63,4 @@ def compute_SDRs(
         y_hat,
         y_tgt
     )
-    print(cSDR, uSDR, siSDR)
     return cSDR, uSDR, siSDR

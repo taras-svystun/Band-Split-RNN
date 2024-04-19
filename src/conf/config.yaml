@@ -51,7 +51,7 @@ trainer:
   max_epochs: 500
   check_val_every_n_epoch: 5
   num_sanity_val_steps: 5
-  log_every_n_steps: 850
+  log_every_n_steps: 100
   accelerator: "auto"
   devices: 1
   gradient_clip_val: 5
