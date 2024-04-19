@@ -156,7 +156,7 @@ def my_app(cfg: DictConfig) -> None:
     model, opt, sch = initialize_model(cfg)
     if hasattr(cfg, 'ckpt_path'):
         state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
-        model = model.load_state_dict(state_dict, strict=True)
+        model.load_state_dict(state_dict, strict=True)
         log.info("Loaded .ckpt checkpoint model")
 
     log.info("Initializing Lightning logger and callbacks.")
