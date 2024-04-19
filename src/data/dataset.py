@@ -279,7 +279,7 @@ class EvalSourceSeparationDataset(Dataset):
     def get_test_filelist(self) -> tp.List[tp.Tuple[str, str]]:
         filelist = []
         test_dir = self.in_fp / 'train'
-        for fp in test_dir.glob('*Classic*'):
+        for fp in test_dir.glob('*'):
             fp_template = str(fp / "{}.wav")
             fp_mix = fp_template.format('mixture')
             fp_tgt = fp_template.format(self.target)
