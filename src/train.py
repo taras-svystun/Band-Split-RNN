@@ -104,13 +104,6 @@ def initialize_model(
             )
         else:
             # if LambdaLR
-            print('Correct SCH')
-            print()
-            print()
-            print()
-            print()
-            print()
-            print('-' * 50)
             lr_lambda = lambda epoch: (
                 cfg.sch.alpha ** (cfg.sch.warmup_step - epoch)
                 if epoch < cfg.sch.warmup_step
