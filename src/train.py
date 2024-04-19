@@ -84,6 +84,8 @@ def initialize_model(
     model = BandSplitRNN(
         **cfg.model
     )
+    model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
+    print('Loaded model from checkpoint successfully!')
     # initialize optimizer
     if hasattr(cfg, 'opt'):
         opt = instantiate(
@@ -102,6 +104,13 @@ def initialize_model(
             )
         else:
             # if LambdaLR
+            print('Correct SCH')
+            print()
+            print()
+            print()
+            print()
+            print()
+            print('-' * 50)
             lr_lambda = lambda epoch: (
                 cfg.sch.alpha ** (cfg.sch.warmup_step - epoch)
                 if epoch < cfg.sch.warmup_step
