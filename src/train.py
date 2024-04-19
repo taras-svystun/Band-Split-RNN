@@ -169,7 +169,7 @@ def my_app(cfg: DictConfig) -> None:
     if hasattr(cfg, 'ckpt_path'):
         # state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
         # model = model.load_state_dict(state_dict, strict=True)
-        plmodel = plmodel.load_from_checkpoint(cfg.ckpt_path)
+        plmodel = PLModel.load_from_checkpoint(cfg.ckpt_path)
         log.info("Loaded .ckpt checkpoint model")
     
     trainer = pl.Trainer(
