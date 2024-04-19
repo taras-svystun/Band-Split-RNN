@@ -25,7 +25,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 1e-3
+  lr: 2e-3
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -35,7 +35,7 @@ opt:
 sch:
     warmup_step: 0
     alpha: 0.1
-    gamma: 0.992
+    gamma: 0.995
 
 ckpt_path: logs/bandsplitrnn/2024-04-19_07-30/weights/epoch1999-val_loss0.16.ckpt
 
