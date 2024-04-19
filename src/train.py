@@ -85,12 +85,8 @@ def initialize_model(
     model = BandSplitRNN(
         **cfg.model
     )
-    if hasattr(cfg, 'ckpt_path'):
-        state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
-        model = model.load_state_dict(state_dict, strict=True)
-    else:    
-        model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
-    print('Loaded model from checkpoint successfully!')
+    model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
+    log.info("Loaded .pt model")
     
     
     
@@ -170,6 +166,12 @@ def my_app(cfg: DictConfig) -> None:
         opt, sch,
         cfg
     )
+    if hasattr(cfg, 'ckpt_path'):
+        # state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
+        # model = model.load_state_dict(state_dict, strict=True)
+        plmodel = plmodel.load_from_checkpoint(cfg.ckpt_path)
+        log.info("Loaded .ckpt checkpoint model")
+    
     trainer = pl.Trainer(
         **cfg.trainer,
         logger=logger,
