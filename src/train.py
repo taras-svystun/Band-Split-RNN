@@ -164,12 +164,12 @@ def my_app(cfg: DictConfig) -> None:
         # state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
         # model = model.load_state_dict(state_dict, strict=True)
         plmodel = PLModel.load_from_checkpoint(
-            model,
-            featurizer, inverse_featurizer,
-            augs,
-            opt, sch,
-            cfg,
-            checkpoint_path=cfg.ckpt_path
+            checkpoint_path=cfg.ckpt_path,
+            model=model,
+            featurizer=featurizer, inverse_featurizer=inverse_featurizer,
+            augs=augs,
+            opt=opt, sch=sch,
+            hparams=cfg,
         )
         log.info("Loaded .ckpt checkpoint model")
     else:

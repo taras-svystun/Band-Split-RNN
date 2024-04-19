@@ -10,12 +10,12 @@ from omegaconf import DictConfig
 class PLModel(pl.LightningModule):
     def __init__(
             self,
-            model: nn.Module,
-            featurizer: nn.Module,
-            inverse_featurizer: nn.Module,
-            augmentations: nn.Module,
-            opt: Optimizer,
-            sch: lr_scheduler._LRScheduler,
+            model: nn.Module = None,
+            featurizer: nn.Module = None,
+            inverse_featurizer: nn.Module = None,
+            augmentations: nn.Module = None,
+            opt: Optimizer = None,
+            sch: lr_scheduler._LRScheduler = None,
             hparams: DictConfig = None
     ):
         super().__init__()
