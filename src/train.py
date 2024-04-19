@@ -183,7 +183,7 @@ def my_app(cfg: DictConfig) -> None:
             plmodel,
             train_dataloaders=train_loader,
             val_dataloaders=val_loader,
-            ckpt_path=cfg.ckpt_path
+            # ckpt_path=cfg.ckpt_path
         )
     except Exception as e:
         log.error(traceback.format_exc())
