@@ -35,7 +35,7 @@ opt:
 sch:
     warmup_step: 0
     alpha: 0.1
-    gamma: 0.995
+    gamma: 0.9985
 
 ckpt_path: logs/bandsplitrnn/2024-04-19_07-30/weights/epoch1999-val_loss0.16.ckpt
 
@@ -48,7 +48,7 @@ logger:
 
 trainer:
   fast_dev_run: False
-  max_epochs: 5000
+  max_epochs: 10000
   check_val_every_n_epoch: 200
   num_sanity_val_steps: 1
   log_every_n_steps: 5
