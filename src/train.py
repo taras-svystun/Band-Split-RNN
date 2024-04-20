@@ -151,7 +151,7 @@ def my_app(cfg: DictConfig) -> None:
     augs = initialize_augmentations(cfg)
 
     log.info("Initializing model, optimizer, scheduler.")
-    model, opt, sch = initialize_model(cfg)
+    model, opt, sch = initialize_modelLL(cfg)
 
     log.info("Initializing Lightning logger and callbacks.")
     logger, callbacks = initialize_utils(cfg)
