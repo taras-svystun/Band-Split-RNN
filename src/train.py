@@ -104,11 +104,13 @@ def initialize_model(
             )
         else:
             # if LambdaLR
-            lr_lambda = lambda epoch: (
-                cfg.sch.alpha ** (cfg.sch.warmup_step - epoch)
-                if epoch < cfg.sch.warmup_step
-                else cfg.sch.gamma ** (epoch - cfg.sch.warmup_step)
-            )
+            # lr_lambda = lambda epoch: (
+            #     cfg.sch.alpha ** (cfg.sch.warmup_step - epoch)
+            #     if epoch < cfg.sch.warmup_step
+            #     else cfg.sch.gamma ** (epoch - cfg.sch.warmup_step)
+            # )
+            lr_lambda = lambda epoch: cfg.sch.gamma ** (epoch // 2)
+            
             sch = torch.optim.lr_scheduler.LambdaLR(
                 optimizer=opt,
                 lr_lambda=lr_lambda

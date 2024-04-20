@@ -33,9 +33,9 @@ opt:
 
 # torch.optim.lr_scheduler.LambdaLR
 sch:
-    warmup_step: 0
-    alpha: 0.1
-    gamma: 0.92
+    # warmup_step: 0
+    # alpha: 0.1
+    gamma: 0.95
 
 ckpt_path: null
 
