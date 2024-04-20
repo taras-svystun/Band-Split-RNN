@@ -78,6 +78,11 @@ class PLModel(pl.LightningModule):
         """
         # augmentations
         batchT = self.augmentations(batchT)
+        if torch.any(torch.isnan(batchT)):
+            print('Input waveform has problems')
+        
+        if torch.any(torch.isnan(batchS)):
+            print('Input spectrogram has problems')
 
         # STFT
         batchS = self.featurizer(batchT)
