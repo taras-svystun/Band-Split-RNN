@@ -53,7 +53,10 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
+        
         self.mix_tgt_too = mix_tgt_too
+        if not self.mix_tgt_too:
+            self.TARGETS.discard(self.target)
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
         filename2label = {}
@@ -132,16 +135,15 @@ class SourceSeparationDataset(Dataset):
         Creating new mixture and new target from target file and random multiple sources
         """
         # decide how many sources to mix
-        if not self.mix_tgt_too:
-            self.TARGETS.discard(self.target)
-        n_sources = random.randrange(1, len(self.TARGETS) + 1)
+        
+        # n_sources = random.randrange(1, len(self.TARGETS) + 1)
         # decide which sources to mix
-        targets_to_add = random.sample(
-            self.TARGETS, n_sources
-        )
+        # targets_to_add = random.sample(
+        #     self.TARGETS, 3
+        # )
         # create new mix segment
         mix_segment = tgt_segment.clone()
-        for target in targets_to_add:
+        for target in self.TARGETS:
             # get random file to mix source from
             fp_template_to_add, indices_to_add = random.choice(self.filelist)
             segment_to_add = self.load_file(
@@ -258,40 +260,40 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
-            if torch.any(mix_segment.isnan()):
-                print('Problem with mix 1')
-            if torch.any(tgt_segment.isnan()):
-                print('Problem with target 1')
+            # if torch.any(mix_segment.isnan()):
+            #     print('Problem with mix 1')
+            # if torch.any(tgt_segment.isnan()):
+            #     print('Problem with target 1')
             # dropping target
             if random.random() < self.silent_prob:
                 mix_segment, tgt_segment = self.imitate_silent_segments(
                     mix_segment, tgt_segment
                 )
                 
-            if torch.any(mix_segment.isnan()):
-                print('Problem with mix 2')
-            if torch.any(tgt_segment.isnan()):
-                print('Problem with target 2')
+            # if torch.any(mix_segment.isnan()):
+            #     print('Problem with mix 2')
+            # if torch.any(tgt_segment.isnan()):
+            #     print('Problem with target 2')
             # mixing with other sources
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
                 )
             
-            if torch.any(mix_segment.isnan()):
-                print('Problem with mix 3')
-            if torch.any(tgt_segment.isnan()):
-                print('Problem with target 3')
+            # if torch.any(mix_segment.isnan()):
+            #     print('Problem with mix 3')
+            # if torch.any(tgt_segment.isnan()):
+            #     print('Problem with target 3')
             
             if random.random() < self.remixing_ratio:
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
             
-            if torch.any(mix_segment.isnan()):
-                print('Problem with mix 4')
-            if torch.any(tgt_segment.isnan()):
-                print('Problem with target 4')
+            # if torch.any(mix_segment.isnan()):
+            #     print('Problem with mix 4')
+            # if torch.any(tgt_segment.isnan()):
+            #     print('Problem with target 4')
         return mix_segment, tgt_segment
 
     def __getitem__(
