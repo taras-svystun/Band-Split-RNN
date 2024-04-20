@@ -16,6 +16,7 @@ from torch.optim import Optimizer, lr_scheduler
 from data import SourceSeparationDataset, collate_fn
 from model import BandSplitRNN, PLModel
 
+torch.autograd.set_detect_anomaly(True)
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
