@@ -57,7 +57,7 @@ trainer:
   accelerator: "auto"
   devices: 2
   gradient_clip_val: 5
-  precision: 32
+  # precision: 32
   enable_progress_bar: True
   benchmark: True
   deterministic: False
