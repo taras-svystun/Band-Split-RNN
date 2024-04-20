@@ -5,6 +5,7 @@ import torch.nn as nn
 import pytorch_lightning as pl
 from torch.optim import Optimizer, lr_scheduler
 from omegaconf import DictConfig
+from sys import exit
 
 
 class PLModel(pl.LightningModule):
@@ -77,9 +78,13 @@ class PLModel(pl.LightningModule):
         Input shape: [batch_size, n_sources, n_channels, time]
         """
         # augmentations
-        batchT = self.augmentations(batchT)
         if torch.any(torch.isnan(batchT)):
             print('Input waveform has problems')
+            exit()
+        batchT = self.augmentations(batchT)
+        if torch.any(torch.isnan(batchT)):
+            print('Augmented waveform has problems')
+            exit()
         
         
 
