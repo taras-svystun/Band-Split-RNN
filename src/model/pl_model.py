@@ -128,9 +128,14 @@ class PLModel(pl.LightningModule):
         }
         loss = lossR + lossI + lossT
         if torch.isnan(loss):
-            print(f'{lossR.item()=}')
-            print(f'{lossI.item()=}')
-            print(f'{lossT.item()=}')
+            print(torch.isnan(predT))
+            print(predT)
+            print()
+            print(torch.isnan(tgtT))
+            print(tgtT)
+            # print(f'{lossR.item()=}')
+            # print(f'{lossI.item()=}')
+            # print(f'{lossT.item()=}')
             print('-' * 50)
         return loss, loss_dict
 
