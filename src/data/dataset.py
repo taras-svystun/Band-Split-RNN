@@ -151,10 +151,6 @@ class SourceSeparationDataset(Dataset):
             )
             mix_segment += segment_to_add
             if target == self.target:
-                print('-' * 50)
-                print('-' * 50)
-                print('I am here')
-                print('-' * 50)
                 tgt_segment += segment_to_add
         return (
             mix_segment, tgt_segment
