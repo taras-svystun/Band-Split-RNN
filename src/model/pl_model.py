@@ -78,12 +78,12 @@ class PLModel(pl.LightningModule):
         Input shape: [batch_size, n_sources, n_channels, time]
         """
         # augmentations
-        if torch.any(torch.isnan(batchT)):
-            print('Input waveform has problems')
+        # if torch.any(torch.isnan(batchT)):
+        #     print('Input waveform has problems')
 
         batchT = self.augmentations(batchT)
-        if torch.any(torch.isnan(batchT)):
-            print('Augmented waveform has problems')
+        # if torch.any(torch.isnan(batchT)):
+        #     print('Augmented waveform has problems')
 
         
         
@@ -92,21 +92,21 @@ class PLModel(pl.LightningModule):
         batchS = self.featurizer(batchT)
         mixS, tgtS = batchS[:, 0], batchS[:, 1]
         
-        if torch.any(torch.isnan(batchS)):
-            print('Input spectrogram has problems')
+        # if torch.any(torch.isnan(batchS)):
+        #     print('Input spectrogram has problems')
 
         # apply model
         predS = self.model(mixS)
-        if torch.any(torch.isnan(predS)):
-            print('Spectrogram has problems')
+        # if torch.any(torch.isnan(predS)):
+        #     print('Spectrogram has problems')
 
         # iSTFT
         batchT = self.inverse_featurizer(
             torch.stack((predS, tgtS), dim=1)
         )
         predT, tgtT = batchT[:, 0], batchT[:, 1]
-        if torch.any(torch.isnan(predT)):
-            print('Waveform has problems')
+        # if torch.any(torch.isnan(predT)):
+        #     print('Waveform has problems')
 
         # compute loss
         loss, loss_dict = self.compute_losses(
