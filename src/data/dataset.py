@@ -196,6 +196,9 @@ class SourceSeparationDataset(Dataset):
         
         if torch.any(scaled_noise.isnan()):
             print('Problems with scaled_noise in add noise')
+            print(f'{energy_signal=}')
+            print(f'{energy_noise=}')
+            
 
         return waveform + scaled_noise  # (*, L)
 

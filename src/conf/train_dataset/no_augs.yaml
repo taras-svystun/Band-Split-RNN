@@ -8,5 +8,6 @@ sr: 44100
 
 silent_prob: 0.0
 mix_prob: 0.0
+remixing_ratio: 0.
 mix_tgt_too: False
 
