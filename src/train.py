@@ -18,8 +18,8 @@ from model import BandSplitRNN, PLModel
 
 log = logging.getLogger(__name__)
 
-# def lr_lambda(epoch, cfg=None):
-#     return cfg.sch.gamma ** (epoch // 2)
+def lr_lambda(epoch):
+    return .95 ** (epoch // 2)
 
 
 def initialize_loaders(cfg: DictConfig) -> tp.Tuple[DataLoader, DataLoader]:
@@ -122,8 +122,7 @@ def initialize_model(
             
             sch = torch.optim.lr_scheduler.LambdaLR(
                 optimizer=opt,
-                # lr_lambda=lr_lambda
-                lr_lambda=lambda epoch: cfg.sch.gamma ** (epoch // 2)
+                lr_lambda=lr_lambda
             )
     else:
         sch = None
