@@ -127,6 +127,11 @@ class PLModel(pl.LightningModule):
             "lossTime": lossT
         }
         loss = lossR + lossI + lossT
+        print()
+        print(f'{lossR=}')
+        print(f'{lossI=}')
+        print(f'{lossT=}')
+        print()
         return loss, loss_dict
 
     @staticmethod
