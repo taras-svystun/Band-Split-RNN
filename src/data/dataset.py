@@ -248,21 +248,40 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
+            if torch.any(mix_segment.isnan()):
+                print('Problem with mix 1')
+            if torch.any(tgt_segment.isnan()):
+                print('Problem with target 1')
             # dropping target
             if random.random() < self.silent_prob:
                 mix_segment, tgt_segment = self.imitate_silent_segments(
                     mix_segment, tgt_segment
                 )
+                
+            if torch.any(mix_segment.isnan()):
+                print('Problem with mix 2')
+            if torch.any(tgt_segment.isnan()):
+                print('Problem with target 2')
             # mixing with other sources
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
                 )
             
+            if torch.any(mix_segment.isnan()):
+                print('Problem with mix 3')
+            if torch.any(tgt_segment.isnan()):
+                print('Problem with target 3')
+            
             if random.random() < self.remixing_ratio:
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
+            
+            if torch.any(mix_segment.isnan()):
+                print('Problem with mix 4')
+            if torch.any(tgt_segment.isnan()):
+                print('Problem with target 4')
         return mix_segment, tgt_segment
 
     def __getitem__(
@@ -287,8 +306,7 @@ class SourceSeparationDataset(Dataset):
         mix_segment, tgt_segment = self.augment(mix_segment, tgt_segment)
         if torch.any(mix_segment.isnan()):
             print('Problem with segment after augm')
-        if torch.any(tgt_segment.isnan()):
-            print('Problem with target after augm')
+        
 
         return (
             mix_segment, tgt_segment
