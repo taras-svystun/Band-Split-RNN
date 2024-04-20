@@ -12,13 +12,13 @@ defaults:
 
 # data
 train_loader:
-  batch_size: 10
+  batch_size: 5
   num_workers: 4
   persistent_workers: True
   shuffle: True
   drop_last: True
 val_loader:
-  batch_size: 10
+  batch_size: 5
   num_workers: 4
   persistent_workers: True
   shuffle: False
@@ -55,7 +55,7 @@ trainer:
   num_sanity_val_steps: 5
   log_every_n_steps: 100
   accelerator: "auto"
-  devices: 4
+  devices: 8
   gradient_clip_val: 5
   precision: 32
   enable_progress_bar: True
