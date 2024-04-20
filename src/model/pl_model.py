@@ -85,12 +85,16 @@ class PLModel(pl.LightningModule):
 
         # apply model
         predS = self.model(mixS)
+        if torch.any(torch.isnan(predS)):
+            print('Spectrogram has problems')
 
         # iSTFT
         batchT = self.inverse_featurizer(
             torch.stack((predS, tgtS), dim=1)
         )
         predT, tgtT = batchT[:, 0], batchT[:, 1]
+        if torch.any(torch.isnan(predT)):
+            print('Waveform has problems')
 
         # compute loss
         loss, loss_dict = self.compute_losses(
@@ -127,16 +131,14 @@ class PLModel(pl.LightningModule):
             "lossTime": lossT
         }
         loss = lossR + lossI + lossT
-        if torch.isnan(loss):
-            print(torch.isnan(predT))
-            print(predT)
-            print()
-            print(torch.isnan(tgtT))
-            print(tgtT)
-            # print(f'{lossR.item()=}')
-            # print(f'{lossI.item()=}')
-            # print(f'{lossT.item()=}')
-            print('-' * 50)
+        # if torch.isnan(loss):
+        #     print(torch.any(torch.isnan(predT)))
+        #     print()
+        #     print(torch.any(torch.isnan(tgtT)))
+        #     # print(f'{lossR.item()=}')
+        #     # print(f'{lossI.item()=}')
+        #     # print(f'{lossT.item()=}')
+        #     print('-' * 50)
         return loss, loss_dict
 
     @staticmethod

@@ -13,13 +13,13 @@ defaults:
 # data
 train_loader:
   batch_size: 5
-  num_workers: 4
+  num_workers: 8
   persistent_workers: True
   shuffle: True
   drop_last: False
 val_loader:
   batch_size: 5
-  num_workers: 4
+  num_workers: 8
   persistent_workers: True
   shuffle: False
   drop_last: False
@@ -27,7 +27,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 1e-3
+  lr: 1e-1
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
