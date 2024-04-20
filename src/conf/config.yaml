@@ -52,7 +52,7 @@ trainer:
   check_val_every_n_epoch: 5
   num_sanity_val_steps: 5
   log_every_n_steps: 100
-  accelerator: "cuda"
+  accelerator: "auto"
   devices: 2
   gradient_clip_val: 5
   precision: 32
