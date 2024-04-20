@@ -127,11 +127,11 @@ class PLModel(pl.LightningModule):
             "lossTime": lossT
         }
         loss = lossR + lossI + lossT
-        print()
-        print(f'{lossR=}')
-        print(f'{lossI=}')
-        print(f'{lossT=}')
-        print()
+        if torch.isnan(loss):
+            print(f'{lossR.item()=}')
+            print(f'{lossI.item()=}')
+            print(f'{lossT.item()=}')
+            print('-' * 50)
         return loss, loss_dict
 
     @staticmethod
