@@ -113,7 +113,7 @@ if __name__ == '__main__':
         level=logging.INFO,
         format='%(asctime)s %(levelname)-8s %(message)s',
         datefmt='%a, %d %b %Y %H:%M:%S',
-        filename=f'{args.run_dir}/test.log',
+        filename='saved_models/vocals/test.log',
         filemode='w'
     )
 
