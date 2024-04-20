@@ -9,7 +9,7 @@ import torch
 from omegaconf import OmegaConf
 
 from separator import Separator
-from data import EvalSourceSeparationDataset
+from data import EvalSourceSeparationDataset, SourceSeparationDataset
 from utils.utils_inference import load_pl_state_dict
 from utils.utils_test import compute_SDRs
 
@@ -37,9 +37,12 @@ class EvaluateProgram:
 
         logger.info("Initializing the dataset...")
         self.dataset = EvalSourceSeparationDataset(mode='test', **self.cfg.test_dataset)
+        # self.dataset = SourceSeparationDataset(**{k: v for k, v in self.cfg.test_dataset.items() if k !='in_fp'}, )
+
         logger.info("Initializing the separator...")
         self.cfg['audio_params'] = self.cfg.test_dataset
-        self.sep = Separator(self.cfg, None)
+        # self.sep = Separator(self.cfg, None)
+        self.sep = Separator(self.cfg, 'saved_models/vocals/vocals_v2.pt')
         _ = self.sep.eval()
         _ = self.sep.to(self.device)
 
@@ -66,15 +69,16 @@ class EvaluateProgram:
 
     def run(self) -> None:
         # iterate over checkpoints
-        for ckpt_path in self.ckpt_dir.glob("*.ckpt"):
-            logger.info(f"Evaluating checkpoint - {ckpt_path.name}")
-            state_dict = load_pl_state_dict(ckpt_path, device=self.device)
-            _ = self.sep.model[1].load_state_dict(state_dict, strict=True)
-            metrics = self.run_one_ckpt()
-            for m in metrics:
-                logger.info(
-                    f"Metric - {m}, mean - {metrics[m].mean():.3f}, std - {metrics[m].std():.3f}"
-                )
+        # for ckpt_path in self.ckpt_dir.glob("*.ckpt"):
+        logger.info(f"Evaluating vocals_v2.pt")
+        # state_dict = load_pl_state_dict(ckpt_path, device=self.device)
+        # state_dict = torch.load('saved_models/vocals/vocals_v2.pt', mmap=True)
+        # _ = self.sep.model[1].load_state_dict(state_dict, strict=True)
+        metrics = self.run_one_ckpt()
+        for m in metrics:
+            logger.info(
+                f"Metric - {m}, mean - {metrics[m].mean():.3f}, std - {metrics[m].std():.3f}"
+            )
         return None
 
 
@@ -92,7 +96,7 @@ if __name__ == '__main__':
         '-d',
         '--run-dir',
         type=str,
-        required=True,
+        required=False,
         help="Path to directory checkpoints, configs, etc"
     )
     parser.add_argument(
