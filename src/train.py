@@ -17,7 +17,7 @@ from data import SourceSeparationDataset, collate_fn
 from model import BandSplitRNN, PLModel
 
 # torch.autograd.set_detect_anomaly(True)
-# torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision('high')
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
