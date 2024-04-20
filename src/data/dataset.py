@@ -184,12 +184,18 @@ class SourceSeparationDataset(Dataset):
             masked_noise = noise
 
         energy_signal = torch.linalg.vector_norm(masked_waveform, ord=2, dim=-1) ** 2  # (*,)
+        
         energy_noise = torch.linalg.vector_norm(masked_noise, ord=2, dim=-1) ** 2  # (*,)
         original_snr_db = 10 * (torch.log10(energy_signal) - torch.log10(energy_noise))
         scale = 10 ** ((original_snr_db - snr) / 20.0)  # (*,)
 
         # scale noise
         scaled_noise = scale.unsqueeze(-1) * noise  # (*, 1) * (*, L) = (*, L)
+        if torch.any(waveform.isnan()):
+            print('Problems with waveform in add noise')
+        
+        if torch.any(scaled_noise.isnan()):
+            print('Problems with scaled_noise in add noise')
 
         return waveform + scaled_noise  # (*, L)
 
@@ -234,6 +240,8 @@ class SourceSeparationDataset(Dataset):
         if torch.any(torch.isnan(mix_segment)):
             print('Corrupted mix_segment')
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
+        if torch.any(torch.isnan(mix_segment)):
+            print('Corrupted mix_segment after remix')
         max_norm = mix_segment.abs().max()
         mix_segment /= max_norm
     
