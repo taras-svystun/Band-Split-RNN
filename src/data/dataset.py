@@ -277,9 +277,18 @@ class SourceSeparationDataset(Dataset):
             mix_segment, tgt_segment = self.filelist[index]
         else:
             mix_segment, tgt_segment = self.load_files(*self.filelist[index])
+            
+        if torch.any(mix_segment.isnan()):
+            print('Problem with segment')
+        if torch.any(tgt_segment.isnan()):
+            print('Problem with target')
 
         # augmentations related to mixing/dropping sources
         mix_segment, tgt_segment = self.augment(mix_segment, tgt_segment)
+        if torch.any(mix_segment.isnan()):
+            print('Problem with segment after augm')
+        if torch.any(tgt_segment.isnan()):
+            print('Problem with target after augm')
 
         return (
             mix_segment, tgt_segment
