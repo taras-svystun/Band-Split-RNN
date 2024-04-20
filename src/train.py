@@ -74,7 +74,7 @@ def initialize_augmentations(
     return augs
 
 
-def initialize_modelLL(
+def initialize_model(
         cfg: DictConfig
 ) -> tp.Tuple[nn.Module, Optimizer, lr_scheduler._LRScheduler]:
     """
@@ -109,7 +109,13 @@ def initialize_modelLL(
             #     if epoch < cfg.sch.warmup_step
             #     else cfg.sch.gamma ** (epoch - cfg.sch.warmup_step)
             # )
-            lr_lambda = lambda epoch: cfg.sch.gamma ** (epoch // 2)
+            
+            
+            
+            # lr_lambda = lambda epoch: cfg.sch.gamma ** (epoch // 2)
+            # This is multi-gpu workaround
+            def lr_lambda(epoch):
+                return cfg.sch.gamma ** (epoch // 2)
             
             sch = torch.optim.lr_scheduler.LambdaLR(
                 optimizer=opt,
@@ -151,7 +157,7 @@ def my_app(cfg: DictConfig) -> None:
     augs = initialize_augmentations(cfg)
 
     log.info("Initializing model, optimizer, scheduler.")
-    model, opt, sch = initialize_modelLL(cfg)
+    model, opt, sch = initialize_model(cfg)
 
     log.info("Initializing Lightning logger and callbacks.")
     logger, callbacks = initialize_utils(cfg)
