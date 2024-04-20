@@ -13,12 +13,12 @@ defaults:
 # data
 train_loader:
   batch_size: 5
-  num_workers: 32
+  num_workers: 1
   shuffle: True
   drop_last: False
 val_loader:
   batch_size: 5
-  num_workers: 32
+  num_workers: 1
   shuffle: False
   drop_last: False
 
