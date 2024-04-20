@@ -80,11 +80,11 @@ class PLModel(pl.LightningModule):
         # augmentations
         if torch.any(torch.isnan(batchT)):
             print('Input waveform has problems')
-            exit()
+
         batchT = self.augmentations(batchT)
         if torch.any(torch.isnan(batchT)):
             print('Augmented waveform has problems')
-            exit()
+
         
         
 
