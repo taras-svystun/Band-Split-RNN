@@ -64,9 +64,9 @@ class PLModel(pl.LightningModule):
         loss, loss_dict, usdr = self.step(batch)
         # logging
         for k in loss_dict:
-            self.log(f"val/{k}", loss_dict[k])
-        self.log("val/loss", loss, prog_bar=True)
-        self.log("val/usdr", usdr, prog_bar=True)
+            self.log(f"val/{k}", loss_dict[k], sync_dist=True)
+        self.log("val/loss", loss, prog_bar=True, sync_dist=True)
+        self.log("val/usdr", usdr, prog_bar=True, sync_dist=True)
 
         return loss
 
