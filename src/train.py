@@ -16,11 +16,16 @@ from torch.optim import Optimizer, lr_scheduler
 from data import SourceSeparationDataset, collate_fn
 from model import BandSplitRNN, PLModel
 
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
+# torch.set_float32_matmul_precision('high')
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
-    return .95 ** (epoch // 2)
+    global cfg
+    # gamma = cfg.gamma
+    
+    gamma = .995
+    return gamma ** (epoch // 2)
 
 
 def initialize_loaders(cfg: DictConfig) -> tp.Tuple[DataLoader, DataLoader]:
