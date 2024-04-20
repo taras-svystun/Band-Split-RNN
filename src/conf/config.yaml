@@ -15,7 +15,7 @@ train_loader:
   batch_size: 5
   num_workers: 8
   persistent_workers: True
-  shuffle: True
+  shuffle: False
   drop_last: False
 val_loader:
   batch_size: 5
