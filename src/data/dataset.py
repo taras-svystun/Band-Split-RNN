@@ -8,6 +8,7 @@ import math
 from torch.utils.data import Dataset
 import torchaudio
 import torchaudio.transforms as T
+import torch.nn.functional as F
 from tqdm import tqdm
 from glob import glob
 
@@ -264,7 +265,14 @@ class SourceSeparationDataset(Dataset):
         target_sr = target_sr // gcd
         
         resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-        return resampler(mix)[:, :mix.shape[1]], resampler(tgt)[:, :tgt.shape[1]]
+        mix_segment, tgt_segment = resampler(mix), resampler(tgt)
+        if mix_segment.shape[1] < mix.shape[1]:
+            length_diff = mix.shape[1] - mix_segment.shape[1]
+            pad_size = length_diff // 2 + 1
+            mix_segment = F.pad(mix_segment, (pad_size, pad_size))
+            tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
+        
+        return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
 
     def augment(
             self,
@@ -275,24 +283,24 @@ class SourceSeparationDataset(Dataset):
             
             # torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/tgt.wav', tgt_segment, 44100)
-            print('-' * 50)
-            print('Everything okay 1')
+            # print('-' * 50)
+            # print('Everything okay 1')
 
             mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
-            print('Everything okay 2')
+            # print('Everything okay 2')
 
             # torchaudio.save(f'../../datasets/tests/augs/1_mix_pitch.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/1_tgt_pitch.wav', tgt_segment, 44100)
 
             mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
-            print('Everything okay 3')
+            # print('Everything okay 3')
             
             # torchaudio.save(f'../../datasets/tests/augs/2_mix_time.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/2_tgt_time.wav', tgt_segment, 44100)
 
             mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
-            print('Everything okay 4')
-            print('-' * 50)
+            # print('Everything okay 4')
+            # print('-' * 50)
             
             # torchaudio.save(f'../../datasets/tests/augs/3_mix_speed.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/3_tgt_speed.wav', tgt_segment, 44100)
