@@ -283,15 +283,29 @@ class SourceSeparationDataset(Dataset):
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
+            
+            torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
 
             mix_segment = self.pitch_shift(mix_segment)
             tgt_segment = self.pitch_shift(tgt_segment)
 
+            torchaudio.save(f'../../datasets/tests/augs/mix_pitch.wav', mix_segment, 44100)
+
             mix_segment = self.time_shift(mix_segment)
             tgt_segment = self.time_shift(tgt_segment)
+            
+            torchaudio.save(f'../../datasets/tests/augs/mix_time.wav', mix_segment, 44100)
 
             mix_segment = self.time_stretch(mix_segment)
             tgt_segment = self.time_stretch(tgt_segment)
+            
+            torchaudio.save(f'../../datasets/tests/augs/mix_speed.wav', mix_segment, 44100)
+            
+            print('-' * 50)
+            print()
+            print('Saved what I need to save')
+            print()
+            print('-' * 50)
 
             # if random.random() < self.pitch_shift_prob:
             #     mix_segment = self.pitch_shift(
