@@ -196,15 +196,7 @@ class SourceSeparationDataset(Dataset):
         scale = 10 ** ((original_snr_db - snr) / 20.0)  # (*,)
 
         # scale noise
-        scaled_noise = scale.unsqueeze(-1) * noise  # (*, 1) * (*, L) = (*, L)
-        if torch.any(waveform.isnan()):
-            print('Problems with waveform in add noise')
-        
-        if torch.any(scaled_noise.isnan()):
-            print('Problems with scaled_noise in add noise')
-            print(f'{energy_signal=}')
-            print(f'{energy_noise=}')
-            
+        scaled_noise = scale.unsqueeze(-1) * noise  # (*, 1) * (*, L) = (*, L)        
 
         return waveform + scaled_noise  # (*, L)
 
@@ -236,8 +228,6 @@ class SourceSeparationDataset(Dataset):
 
 
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
-        if torch.any(torch.isnan(vocals)):
-            print('Corrupted vocals')
 
         # SNR = random.uniform(-5, 15)
         # SNRs = torch.tensor([SNR] * 2)
@@ -246,11 +236,7 @@ class SourceSeparationDataset(Dataset):
         
         # torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
         
-        if torch.any(torch.isnan(mix_segment)):
-            print('Corrupted mix_segment')
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
-        if torch.any(torch.isnan(mix_segment)):
-            print('Corrupted mix_segment after remix')
         max_norm = mix_segment.abs().max()
         mix_segment /= max_norm
     
@@ -269,6 +255,7 @@ class SourceSeparationDataset(Dataset):
         return torch.roll(y, offset, 1)
 
     def time_stretch(self, y):
+        
         factor = random.uniform(.9, 1.1)
 
         source_sr = int(factor * 44_100)
@@ -278,7 +265,7 @@ class SourceSeparationDataset(Dataset):
         target_sr = target_sr // gcd
         
         resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-        return resampler(y)
+        return resampler(y)[:, :y.shape[1]]
 
     def augment(
             self,
@@ -304,35 +291,43 @@ class SourceSeparationDataset(Dataset):
                     mix_segment - tgt_segment
                 )
             
+            mix_segment = self.pitch_shift(mix_segment)
+            tgt_segment = self.pitch_shift(tgt_segment)
             
-            if random.random() < self.pitch_shift_prob:
-                mix_segment = self.pitch_shift(
-                    mix_segment
-                )
-            if random.random() < self.pitch_shift_prob:
-                tgt_segment = self.pitch_shift(
-                    tgt_segment
-                )
+            mix_segment = self.time_shift(mix_segment)
+            tgt_segment = self.time_shift(tgt_segment)
+            
+            mix_segment = self.time_stretch(mix_segment)
+            tgt_segment = self.time_stretch(tgt_segment)
+            
+            # if random.random() < self.pitch_shift_prob:
+            #     mix_segment = self.pitch_shift(
+            #         mix_segment
+            #     )
+            # if random.random() < self.pitch_shift_prob:
+            #     tgt_segment = self.pitch_shift(
+            #         tgt_segment
+            #     )
 
             
-            if random.random() < self.time_shift_prob:
-                mix_segment = self.time_shift(
-                    mix_segment
-                )
-            if random.random() < self.time_shift_prob:
-                tgt_segment = self.time_shift(
-                    tgt_segment
-                )
+            # if random.random() < self.time_shift_prob:
+            #     mix_segment = self.time_shift(
+            #         mix_segment
+            #     )
+            # if random.random() < self.time_shift_prob:
+            #     tgt_segment = self.time_shift(
+            #         tgt_segment
+            #     )
             
             
-            if random.random() < self.time_stretch_prob:
-                mix_segment = self.time_stretch(
-                    mix_segment
-                )
-            if random.random() < self.time_stretch_prob:
-                tgt_segment = self.time_stretch(
-                    tgt_segment
-                )
+            # if random.random() < self.time_stretch_prob:
+            #     mix_segment = self.time_stretch(
+            #         mix_segment
+            #     )
+            # if random.random() < self.time_stretch_prob:
+            #     tgt_segment = self.time_stretch(
+            #         tgt_segment
+            #     )
 
         return mix_segment, tgt_segment
 

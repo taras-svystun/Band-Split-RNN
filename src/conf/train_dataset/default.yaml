@@ -10,7 +10,7 @@ preload_dataset: False
 silent_prob: 0.
 mix_prob: 0.8
 remixing_ratio: 0.
-pitch_shift_prob: 0.
-time_shift_prob: 0.
-time_stretch_prob: 0.
+# pitch_shift_prob: 0.
+# time_shift_prob: 0.
+# time_stretch_prob: 0.
 mix_tgt_too: False
