@@ -323,7 +323,12 @@ class SourceSeparationDataset(Dataset):
                     mix_segment - tgt_segment
                 )
             
-            mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
+            if random.random() < self.time_shift_prob:
+                mix_segment, tgt_segment = self.time_shift(
+                    mix_segment, tgt_segment
+                )
+            
+            
 
             # if random.random() < self.pitch_shift_prob:
             #     mix_segment = self.pitch_shift(
