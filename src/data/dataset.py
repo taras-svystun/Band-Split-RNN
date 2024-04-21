@@ -256,24 +256,24 @@ class SourceSeparationDataset(Dataset):
         offset = (random.randint(-44100, 44100)) * 2
         return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
 
-    # def time_stretch(self, mix, tgt):
-    #     factor = random.uniform(.9, 1)
+    def time_stretch(self, mix, tgt):
+        factor = random.uniform(.9, 1)
 
-    #     source_sr = int(factor * 44_100)
-    #     target_sr = int(44_100)
-    #     gcd = math.gcd(source_sr, target_sr)
-    #     source_sr =  source_sr // gcd
-    #     target_sr = target_sr // gcd
+        source_sr = int(factor * 44_100)
+        target_sr = int(44_100)
+        gcd = math.gcd(source_sr, target_sr)
+        source_sr =  source_sr // gcd
+        target_sr = target_sr // gcd
         
-    #     resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-    #     mix_segment, tgt_segment = resampler(mix), resampler(tgt)
-    #     # if mix_segment.shape[1] < mix.shape[1]:
-    #     #     length_diff = mix.shape[1] - mix_segment.shape[1]
-    #     #     pad_size = length_diff // 2 + 1
-    #     #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
-    #     #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
+        resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
+        mix_segment, tgt_segment = resampler(mix), resampler(tgt)
+        # if mix_segment.shape[1] < mix.shape[1]:
+        #     length_diff = mix.shape[1] - mix_segment.shape[1]
+        #     pad_size = length_diff // 2 + 1
+        #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
+        #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
         
-    #     return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
+        return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
 
     def augment(
             self,
