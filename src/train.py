@@ -24,7 +24,7 @@ def lr_lambda(epoch):
     global cfg
     # gamma = cfg.gamma
     
-    gamma = .995
+    gamma = .98
     return gamma ** (epoch // 2)
 
 
