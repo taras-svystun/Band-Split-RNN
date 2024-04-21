@@ -21,11 +21,7 @@ from model import BandSplitRNN, PLModel
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
-    global cfg
-    # gamma = cfg.gamma
-    
-    gamma = .995
-    return gamma ** (epoch // 2)
+    return .99 ** (epoch // 2)
 
 
 def initialize_loaders(cfg: DictConfig) -> tp.Tuple[DataLoader, DataLoader]:
