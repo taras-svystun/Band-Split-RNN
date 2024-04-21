@@ -14,13 +14,13 @@ defaults:
 train_loader:
   batch_size: 5
   num_workers: 4
-  # persistent_workers: True
+  persistent_workers: True
   shuffle: False
   drop_last: True
 val_loader:
   batch_size: 5
   num_workers: 4
-  # persistent_workers: True
+  persistent_workers: True
   shuffle: False
   drop_last: False
 
