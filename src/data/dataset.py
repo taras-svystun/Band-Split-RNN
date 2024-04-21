@@ -141,13 +141,6 @@ class SourceSeparationDataset(Dataset):
         """
         Creating new mixture and new target from target file and random multiple sources
         """
-        # decide how many sources to mix
-        
-        # n_sources = random.randrange(1, len(self.TARGETS) + 1)
-        # decide which sources to mix
-        # targets_to_add = random.sample(
-        #     self.TARGETS, 3
-        # )
         # create new mix segment
         mix_segment = tgt_segment.clone()
         for target in self.TARGETS:
@@ -227,54 +220,24 @@ class SourceSeparationDataset(Dataset):
             vocal_samples.append(vocal_sample)
             vocal_lengths += vocal_sample.shape[1]
 
-
-
         vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
 
-        # SNR = random.uniform(-5, 15)
-        # SNRs = torch.tensor([SNR] * 2)
-
         SNRs = torch.tensor([random.uniform(-5, 15)] * 2)
-        
-        # torchaudio.save(f'../../datasets/tests/mix_{SNR:.1f}.wav', mix_segment, sr)
         
         mix_segment = self.add_noise(vocals, mix_segment, SNRs)
         max_norm = mix_segment.abs().max()
         mix_segment /= max_norm
-    
-        # torchaudio.save(f'../../datasets/tests/vocals_{SNR:.1f}.wav', vocals, sr)
-        # torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
         
         return (mix_segment, vocals)
     
-    # def pitch_shift(self, mix, tgt):
-    #     n_steps = random.uniform(-3, 3)
-    #     # pitch_shift = T.PitchShift(44_100, n_steps)
-    #     # return pitch_shift(mix), pitch_shift(tgt)
-    #     return T.PitchShift(44_100, n_steps)(mix), T.PitchShift(44_100, n_steps)(tgt)
+    def pitch_shift(self, mix, tgt):
+        n_steps = random.uniform(-3, 3)
+        pitch_shift = T.PitchShift(44_100, n_steps)
+        return pitch_shift(mix), pitch_shift(tgt)
 
     def time_shift(self, mix, tgt):
         offset = (random.randint(-44100, 44100)) * 2
         return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
-
-    # def time_stretch(self, mix, tgt):
-    #     factor = random.uniform(.9, 1)
-
-    #     source_sr = int(factor * 44_100)
-    #     target_sr = int(44_100)
-    #     gcd = math.gcd(source_sr, target_sr)
-    #     source_sr =  source_sr // gcd
-    #     target_sr = target_sr // gcd
-        
-    #     resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-    #     mix_segment, tgt_segment = resampler(mix), resampler(tgt)
-    #     # if mix_segment.shape[1] < mix.shape[1]:
-    #     #     length_diff = mix.shape[1] - mix_segment.shape[1]
-    #     #     pad_size = length_diff // 2 + 1
-    #     #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
-    #     #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
-        
-    #     return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
 
     def augment(
             self,
@@ -282,36 +245,6 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
-            
-            # torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
-            # torchaudio.save(f'../../datasets/tests/augs/tgt.wav', tgt_segment, 44100)
-            # print('-' * 50)
-            # print('Everything okay 1')
-            # print('Everything okay 2')
-
-            # torchaudio.save(f'../../datasets/tests/augs/1_mix_pitch.wav', mix_segment, 44100)
-            # torchaudio.save(f'../../datasets/tests/augs/1_tgt_pitch.wav', tgt_segment, 44100)
-
-            # mix_segment, tgt_segment = self.time_shift(*self.pitch_shift(mix_segment, tgt_segment))
-            # mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
-            
-            # print('Everything okay 3')
-            
-            # torchaudio.save(f'../../datasets/tests/augs/2_mix_time.wav', mix_segment, 44100)
-            # torchaudio.save(f'../../datasets/tests/augs/2_tgt_time.wav', tgt_segment, 44100)
-
-            # mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
-            # print('Everything okay 4')
-            # print('-' * 50)
-            
-            # torchaudio.save(f'../../datasets/tests/augs/3_mix_speed.wav', mix_segment, 44100)
-            # torchaudio.save(f'../../datasets/tests/augs/3_tgt_speed.wav', tgt_segment, 44100)
-            
-            # print('-' * 50)
-            # print()
-            # print('Saved what I need to save')
-            # print()
-            # print('-' * 50)
 
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
@@ -328,39 +261,8 @@ class SourceSeparationDataset(Dataset):
                     mix_segment, tgt_segment
                 )
             
-            
-
-            # if random.random() < self.pitch_shift_prob:
-            #     mix_segment = self.pitch_shift(
-            #         mix_segment
-            #     )
-            # if random.random() < self.pitch_shift_prob:
-            #     tgt_segment = self.pitch_shift(
-            #         tgt_segment
-            #     )
-
-            
-            # if random.random() < self.time_shift_prob:
-            #     mix_segment = self.time_shift(
-            #         mix_segment
-            #     )
-            # if random.random() < self.time_shift_prob:
-            #     tgt_segment = self.time_shift(
-            #         tgt_segment
-            #     )
-            
-            
-            # if random.random() < self.time_stretch_prob:
-            #     mix_segment = self.time_stretch(
-            #         mix_segment
-            #     )
-            # if random.random() < self.time_stretch_prob:
-            #     tgt_segment = self.time_stretch(
-            #         tgt_segment
-            #     )
-
         return mix_segment, tgt_segment
-        # return mix_segment.clone().detach(), tgt_segment.clone().detach()
+
 
     def __getitem__(
             self,
@@ -377,7 +279,6 @@ class SourceSeparationDataset(Dataset):
             
         # augmentations related to mixing/dropping sources
         mix_segment, tgt_segment = self.augment(mix_segment, tgt_segment)
-
 
         return (
             mix_segment, tgt_segment
