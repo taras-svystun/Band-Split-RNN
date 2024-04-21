@@ -273,33 +273,26 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
-        
-            if random.random() < self.silent_prob:
-                mix_segment, tgt_segment = self.imitate_silent_segments(
-                    mix_segment, tgt_segment
-                )
-
 
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
                 )
-            
-            
+
             if random.random() < self.remixing_ratio:
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
-            
+
             mix_segment = self.pitch_shift(mix_segment)
             tgt_segment = self.pitch_shift(tgt_segment)
-            
+
             mix_segment = self.time_shift(mix_segment)
             tgt_segment = self.time_shift(tgt_segment)
-            
+
             mix_segment = self.time_stretch(mix_segment)
             tgt_segment = self.time_stretch(tgt_segment)
-            
+
             # if random.random() < self.pitch_shift_prob:
             #     mix_segment = self.pitch_shift(
             #         mix_segment
@@ -344,16 +337,9 @@ class SourceSeparationDataset(Dataset):
         else:
             mix_segment, tgt_segment = self.load_files(*self.filelist[index])
             
-        if torch.any(mix_segment.isnan()):
-            print('Problem with segment')
-        if torch.any(tgt_segment.isnan()):
-            print('Problem with target')
-
         # augmentations related to mixing/dropping sources
         mix_segment, tgt_segment = self.augment(mix_segment, tgt_segment)
-        if torch.any(mix_segment.isnan()):
-            print('Problem with segment after augm')
-        
+
 
         return (
             mix_segment, tgt_segment
