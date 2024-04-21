@@ -9,7 +9,7 @@ sr: 44100
 preload_dataset: False
 silent_prob: 0.
 mix_prob: 0.8
-remixing_ratio: 0.
+remixing_ratio: 0.01
 # pitch_shift_prob: 0.
 # time_shift_prob: 0.
 # time_stretch_prob: 0.

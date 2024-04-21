@@ -290,7 +290,9 @@ class SourceSeparationDataset(Dataset):
             # torchaudio.save(f'../../datasets/tests/augs/1_mix_pitch.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/1_tgt_pitch.wav', tgt_segment, 44100)
 
-            mix_segment, tgt_segment = self.time_shift(*self.pitch_shift(mix_segment, tgt_segment))
+            # mix_segment, tgt_segment = self.time_shift(*self.pitch_shift(mix_segment, tgt_segment))
+            mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
+            # mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
             # print('Everything okay 3')
             
             # torchaudio.save(f'../../datasets/tests/augs/2_mix_time.wav', mix_segment, 44100)
