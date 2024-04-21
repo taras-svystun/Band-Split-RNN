@@ -12,13 +12,13 @@ defaults:
 
 # data
 train_loader:
-  batch_size: 5
+  batch_size: 10
   num_workers: 8
   persistent_workers: True
   shuffle: True
   drop_last: True
 val_loader:
-  batch_size: 5
+  batch_size: 10
   num_workers: 8
   persistent_workers: True
   shuffle: False
@@ -39,7 +39,7 @@ sch:
     # alpha: 0.1
     # gamma: 0.95
 
-ckpt_path: null
+ckpt_path: logs/bandsplitrnn/p_0_2e-4/weights/epoch219-val_usdr7.45.ckpt
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
