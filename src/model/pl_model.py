@@ -53,9 +53,12 @@ class PLModel(pl.LightningModule):
 
         # logging
         for k in loss_dict:
-            self.log(f"train/{k}", loss_dict[k].detach(), on_epoch=True, on_step=False, sync_dist=True)
-        self.log("train/loss", loss.detach(), on_epoch=True, on_step=False, sync_dist=True)
-        self.log("train/usdr", usdr.detach(), on_epoch=True, on_step=False, sync_dist=True)
+            # self.log(f"train/{k}", loss_dict[k].detach(), on_epoch=True, on_step=False, sync_dist=True)
+            self.log(f"train/{k}", loss_dict[k].detach(), on_epoch=True, on_step=False)
+        # self.log("train/loss", loss.detach(), on_epoch=True, on_step=False, sync_dist=True)
+        # self.log("train/usdr", usdr.detach(), on_epoch=True, on_step=False, sync_dist=True)
+        self.log("train/loss", loss.detach(), on_epoch=True, on_step=False)
+        self.log("train/usdr", usdr.detach(), on_epoch=True, on_step=False)
 
         return loss
 
@@ -65,9 +68,12 @@ class PLModel(pl.LightningModule):
         loss, loss_dict, usdr = self.step(batch)
         # logging
         for k in loss_dict:
-            self.log(f"val/{k}", loss_dict[k], sync_dist=True)
-        self.log("val/loss", loss, prog_bar=True, sync_dist=True)
-        self.log("val/usdr", usdr, prog_bar=True, sync_dist=True)
+            # self.log(f"val/{k}", loss_dict[k], sync_dist=True)
+            self.log(f"val/{k}", loss_dict[k])
+        self.log("val/loss", loss, prog_bar=True)
+        self.log("val/usdr", usdr, prog_bar=True)
+        # self.log("val/loss", loss, prog_bar=True, sync_dist=True)
+        # self.log("val/usdr", usdr, prog_bar=True, sync_dist=True)
 
         return loss
 

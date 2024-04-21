@@ -272,6 +272,30 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
+            
+            torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/tgt.wav', tgt_segment, 44100)
+
+            mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
+
+            torchaudio.save(f'../../datasets/tests/augs/1_mix_pitch.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/1_tgt_pitch.wav', tgt_segment, 44100)
+
+            mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
+            
+            torchaudio.save(f'../../datasets/tests/augs/2_mix_time.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/2_tgt_time.wav', tgt_segment, 44100)
+
+            mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
+            
+            torchaudio.save(f'../../datasets/tests/augs/3_mix_speed.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/3_tgt_speed.wav', tgt_segment, 44100)
+            
+            print('-' * 50)
+            print()
+            print('Saved what I need to save')
+            print()
+            print('-' * 50)
 
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
@@ -282,30 +306,6 @@ class SourceSeparationDataset(Dataset):
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
-            
-            torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
-            torchaudio.save(f'../../datasets/tests/augs/tgt.wav', tgt_segment, 44100)
-
-            mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
-
-            torchaudio.save(f'../../datasets/tests/augs/mix_pitch.wav', mix_segment, 44100)
-            torchaudio.save(f'../../datasets/tests/augs/tgt_pitch.wav', tgt_segment, 44100)
-
-            mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
-            
-            torchaudio.save(f'../../datasets/tests/augs/mix_time.wav', mix_segment, 44100)
-            torchaudio.save(f'../../datasets/tests/augs/tgt_time.wav', tgt_segment, 44100)
-
-            mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
-            
-            torchaudio.save(f'../../datasets/tests/augs/mix_speed.wav', mix_segment, 44100)
-            torchaudio.save(f'../../datasets/tests/augs/tgt_speed.wav', tgt_segment, 44100)
-            
-            print('-' * 50)
-            print()
-            print('Saved what I need to save')
-            print()
-            print('-' * 50)
 
             # if random.random() < self.pitch_shift_prob:
             #     mix_segment = self.pitch_shift(
