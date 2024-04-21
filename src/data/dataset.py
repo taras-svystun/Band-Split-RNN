@@ -248,8 +248,9 @@ class SourceSeparationDataset(Dataset):
     
     def pitch_shift(self, mix, tgt):
         n_steps = random.uniform(-3, 3)
-        pitch_shift = T.PitchShift(44_100, n_steps)
-        return pitch_shift(mix), pitch_shift(tgt)
+        # pitch_shift = T.PitchShift(44_100, n_steps)
+        # return pitch_shift(mix), pitch_shift(tgt)
+        return T.PitchShift(44_100, n_steps)(mix), T.PitchShift(44_100, n_steps)(tgt)
 
     def time_shift(self, mix, tgt):
         offset = (random.randint(-44100, 44100)) * 2
