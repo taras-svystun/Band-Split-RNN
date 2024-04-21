@@ -4,8 +4,10 @@ from pathlib import Path
 import sys
 
 import torch
+import math
 from torch.utils.data import Dataset
 import torchaudio
+import torchaudio.transforms as T
 from tqdm import tqdm
 from glob import glob
 
@@ -31,6 +33,9 @@ class SourceSeparationDataset(Dataset):
             mix_prob: float = 0.1,
             remixing_ratio: float = 0.25,
             mix_tgt_too: bool = False,
+            pitch_shift_prob: float = 0.,
+            time_shift_prob: float = 0.,
+            time_stretch_prob: float = 0.
     ):
         self.file_dir = Path(file_dir)
         self.is_training = is_training
@@ -253,6 +258,27 @@ class SourceSeparationDataset(Dataset):
         # torchaudio.save(f'../../datasets/tests/mix_with_vocals_{SNR:.1f}.wav', mix_segment, sr)
         
         return (mix_segment, vocals)
+    
+    def pitch_shift(self, y):
+        n_steps = random.uniform(-3, 3)
+        pitch_shift = T.PitchShift(44_100, n_steps)
+        return pitch_shift(y)
+
+    def time_shift(self, y):
+        offset = random.uniform(-44100, 44100)
+        return torch.roll(y, offset, 1)
+
+    def time_stretch(self, y):
+        factor = random.uniform(.9, 1.1)
+
+        source_sr = int(factor * 44_100)
+        target_sr = int(44_100)
+        gcd = math.gcd(source_sr, target_sr)
+        source_sr =  source_sr // gcd
+        target_sr = target_sr // gcd
+        
+        resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
+        return resampler(y)
 
     def augment(
             self,
@@ -260,40 +286,54 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
-            # if torch.any(mix_segment.isnan()):
-            #     print('Problem with mix 1')
-            # if torch.any(tgt_segment.isnan()):
-            #     print('Problem with target 1')
-            # dropping target
+        
             if random.random() < self.silent_prob:
                 mix_segment, tgt_segment = self.imitate_silent_segments(
                     mix_segment, tgt_segment
                 )
-                
-            # if torch.any(mix_segment.isnan()):
-            #     print('Problem with mix 2')
-            # if torch.any(tgt_segment.isnan()):
-            #     print('Problem with target 2')
-            # mixing with other sources
+
+
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
                 )
             
-            # if torch.any(mix_segment.isnan()):
-            #     print('Problem with mix 3')
-            # if torch.any(tgt_segment.isnan()):
-            #     print('Problem with target 3')
             
             if random.random() < self.remixing_ratio:
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
             
-            # if torch.any(mix_segment.isnan()):
-            #     print('Problem with mix 4')
-            # if torch.any(tgt_segment.isnan()):
-            #     print('Problem with target 4')
+            
+            if random.random() < self.pitch_shift_prob:
+                mix_segment = self.pitch_shift(
+                    mix_segment
+                )
+            if random.random() < self.pitch_shift_prob:
+                tgt_segment = self.pitch_shift(
+                    tgt_segment
+                )
+
+            
+            if random.random() < self.time_shift_prob:
+                mix_segment = self.time_shift(
+                    mix_segment
+                )
+            if random.random() < self.time_shift_prob:
+                tgt_segment = self.time_shift(
+                    tgt_segment
+                )
+            
+            
+            if random.random() < self.time_stretch_prob:
+                mix_segment = self.time_stretch(
+                    mix_segment
+                )
+            if random.random() < self.time_stretch_prob:
+                tgt_segment = self.time_stretch(
+                    tgt_segment
+                )
+
         return mix_segment, tgt_segment
 
     def __getitem__(
