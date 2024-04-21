@@ -245,17 +245,16 @@ class SourceSeparationDataset(Dataset):
         
         return (mix_segment, vocals)
     
-    def pitch_shift(self, y):
+    def pitch_shift(self, mix, tgt):
         n_steps = random.uniform(-3, 3)
         pitch_shift = T.PitchShift(44_100, n_steps)
-        return pitch_shift(y)
+        return pitch_shift(mix), pitch_shift(tgt)
 
-    def time_shift(self, y):
-        offset = random.uniform(-44100, 44100)
-        return torch.roll(y, offset, 1)
+    def time_shift(self, mix, tgt):
+        offset = (random.randint(-44100, 44100)) * 2
+        return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
 
-    def time_stretch(self, y):
-        
+    def time_stretch(self, mix, tgt):
         factor = random.uniform(.9, 1.1)
 
         source_sr = int(factor * 44_100)
@@ -265,7 +264,7 @@ class SourceSeparationDataset(Dataset):
         target_sr = target_sr // gcd
         
         resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-        return resampler(y)[:, :y.shape[1]]
+        return resampler(mix)[:, :mix.shape[1]], resampler(tgt)[:, :tgt.shape[1]]
 
     def augment(
             self,
@@ -285,21 +284,22 @@ class SourceSeparationDataset(Dataset):
                 )
             
             torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
 
-            mix_segment = self.pitch_shift(mix_segment)
-            tgt_segment = self.pitch_shift(tgt_segment)
+            mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
 
             torchaudio.save(f'../../datasets/tests/augs/mix_pitch.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/tgt_pitch.wav', tgt_segment, 44100)
 
-            mix_segment = self.time_shift(mix_segment)
-            tgt_segment = self.time_shift(tgt_segment)
+            mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
             
             torchaudio.save(f'../../datasets/tests/augs/mix_time.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/tgt_time.wav', tgt_segment, 44100)
 
-            mix_segment = self.time_stretch(mix_segment)
-            tgt_segment = self.time_stretch(tgt_segment)
+            mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
             
             torchaudio.save(f'../../datasets/tests/augs/mix_speed.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/tgt_speed.wav', tgt_segment, 44100)
             
             print('-' * 50)
             print()
