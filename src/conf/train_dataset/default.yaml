@@ -9,5 +9,5 @@ sr: 44100
 preload_dataset: False
 silent_prob: 0.
 mix_prob: 0.8
-remixing_ratio: 0.2
+remixing_ratio: 0.1
 mix_tgt_too: False
