@@ -59,6 +59,7 @@ class SourceSeparationDataset(Dataset):
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
         self.remixing_ratio = remixing_ratio
+        self.time_shift_prob = time_shift_prob
         
         self.mix_tgt_too = mix_tgt_too
         if not self.mix_tgt_too:
@@ -246,34 +247,34 @@ class SourceSeparationDataset(Dataset):
         
         return (mix_segment, vocals)
     
-    def pitch_shift(self, mix, tgt):
-        n_steps = random.uniform(-3, 3)
-        # pitch_shift = T.PitchShift(44_100, n_steps)
-        # return pitch_shift(mix), pitch_shift(tgt)
-        return T.PitchShift(44_100, n_steps)(mix), T.PitchShift(44_100, n_steps)(tgt)
+    # def pitch_shift(self, mix, tgt):
+    #     n_steps = random.uniform(-3, 3)
+    #     # pitch_shift = T.PitchShift(44_100, n_steps)
+    #     # return pitch_shift(mix), pitch_shift(tgt)
+    #     return T.PitchShift(44_100, n_steps)(mix), T.PitchShift(44_100, n_steps)(tgt)
 
     def time_shift(self, mix, tgt):
         offset = (random.randint(-44100, 44100)) * 2
         return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
 
-    def time_stretch(self, mix, tgt):
-        factor = random.uniform(.9, 1)
+    # def time_stretch(self, mix, tgt):
+    #     factor = random.uniform(.9, 1)
 
-        source_sr = int(factor * 44_100)
-        target_sr = int(44_100)
-        gcd = math.gcd(source_sr, target_sr)
-        source_sr =  source_sr // gcd
-        target_sr = target_sr // gcd
+    #     source_sr = int(factor * 44_100)
+    #     target_sr = int(44_100)
+    #     gcd = math.gcd(source_sr, target_sr)
+    #     source_sr =  source_sr // gcd
+    #     target_sr = target_sr // gcd
         
-        resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
-        mix_segment, tgt_segment = resampler(mix), resampler(tgt)
-        # if mix_segment.shape[1] < mix.shape[1]:
-        #     length_diff = mix.shape[1] - mix_segment.shape[1]
-        #     pad_size = length_diff // 2 + 1
-        #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
-        #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
+    #     resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
+    #     mix_segment, tgt_segment = resampler(mix), resampler(tgt)
+    #     # if mix_segment.shape[1] < mix.shape[1]:
+    #     #     length_diff = mix.shape[1] - mix_segment.shape[1]
+    #     #     pad_size = length_diff // 2 + 1
+    #     #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
+    #     #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
         
-        return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
+    #     return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
 
     def augment(
             self,
@@ -293,13 +294,13 @@ class SourceSeparationDataset(Dataset):
 
             # mix_segment, tgt_segment = self.time_shift(*self.pitch_shift(mix_segment, tgt_segment))
             # mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
-            # mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
+            
             # print('Everything okay 3')
             
             # torchaudio.save(f'../../datasets/tests/augs/2_mix_time.wav', mix_segment, 44100)
             # torchaudio.save(f'../../datasets/tests/augs/2_tgt_time.wav', tgt_segment, 44100)
 
-            mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
+            # mix_segment, tgt_segment = self.time_stretch(mix_segment, tgt_segment)
             # print('Everything okay 4')
             # print('-' * 50)
             
@@ -321,6 +322,8 @@ class SourceSeparationDataset(Dataset):
                 mix_segment, tgt_segment = self.remix(
                     mix_segment - tgt_segment
                 )
+            
+            mix_segment, tgt_segment = self.time_shift(mix_segment, tgt_segment)
 
             # if random.random() < self.pitch_shift_prob:
             #     mix_segment = self.pitch_shift(
@@ -351,7 +354,8 @@ class SourceSeparationDataset(Dataset):
             #         tgt_segment
             #     )
 
-        return mix_segment.clone().detach(), tgt_segment.clone().detach()
+        return mix_segment, tgt_segment
+        # return mix_segment.clone().detach(), tgt_segment.clone().detach()
 
     def __getitem__(
             self,
