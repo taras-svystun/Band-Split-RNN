@@ -284,7 +284,7 @@ class SourceSeparationDataset(Dataset):
                 )
             
             torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
-            torchaudio.save(f'../../datasets/tests/augs/mix.wav', mix_segment, 44100)
+            torchaudio.save(f'../../datasets/tests/augs/tgt.wav', tgt_segment, 44100)
 
             mix_segment, tgt_segment = self.pitch_shift(mix_segment, tgt_segment)
 
