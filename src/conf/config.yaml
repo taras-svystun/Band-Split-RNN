@@ -39,7 +39,7 @@ sch:
     # alpha: 0.1
     # gamma: 0.95
 
-ckpt_path: logs/bandsplitrnn/p_0_2e-4/weights/epoch219-val_loss0.35.ckpt
+ckpt_path: null
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger
