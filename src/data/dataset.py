@@ -256,7 +256,7 @@ class SourceSeparationDataset(Dataset):
         return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
 
     def time_stretch(self, mix, tgt):
-        factor = random.uniform(.9, 1.1)
+        factor = random.uniform(.9, 1)
 
         source_sr = int(factor * 44_100)
         target_sr = int(44_100)
@@ -266,11 +266,11 @@ class SourceSeparationDataset(Dataset):
         
         resampler = T.Resample(orig_freq=source_sr, new_freq=target_sr)
         mix_segment, tgt_segment = resampler(mix), resampler(tgt)
-        if mix_segment.shape[1] < mix.shape[1]:
-            length_diff = mix.shape[1] - mix_segment.shape[1]
-            pad_size = length_diff // 2 + 1
-            mix_segment = F.pad(mix_segment, (pad_size, pad_size))
-            tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
+        # if mix_segment.shape[1] < mix.shape[1]:
+        #     length_diff = mix.shape[1] - mix_segment.shape[1]
+        #     pad_size = length_diff // 2 + 1
+        #     mix_segment = F.pad(mix_segment, (pad_size, pad_size))
+        #     tgt_segment = F.pad(tgt_segment, (pad_size, pad_size))
         
         return mix_segment[:, :mix.shape[1]], tgt_segment[:, :tgt.shape[1]]
 
@@ -350,7 +350,7 @@ class SourceSeparationDataset(Dataset):
             #         tgt_segment
             #     )
 
-        return mix_segment, tgt_segment
+        return mix_segment.clone().detach(), tgt_segment.clone().detach()
 
     def __getitem__(
             self,
