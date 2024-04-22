@@ -15,6 +15,7 @@ from torch.optim import Optimizer, lr_scheduler
 
 from data import SourceSeparationDataset, collate_fn
 from model import BandSplitRNN, PLModel
+from utils.utils_inference import load_pl_state_dict
 
 # torch.autograd.set_detect_anomaly(True)
 # torch.set_float32_matmul_precision('medium')
@@ -167,6 +168,11 @@ def my_app(cfg: DictConfig) -> None:
 
     log.info("Initializing model, optimizer, scheduler.")
     model, opt, sch = initialize_model(cfg)
+    
+    if hasattr(cfg, 'ckpt_path'):
+        state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
+        model.load_state_dict(state_dict, strict=True)
+        print("Loaded .ckpt checkpoint model")
 
     log.info("Initializing Lightning logger and callbacks.")
     logger, callbacks = initialize_utils(cfg)
