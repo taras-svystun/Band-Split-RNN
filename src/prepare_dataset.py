@@ -82,6 +82,8 @@ def run_program(
     with open(file_path, 'w') as wf:
         for track in tqdm(db):
             # get audio data and transform to torch.Tensor
+            # print(track.__class__)
+            # print(track.name)
             y = torch.tensor(
                 track.targets[target].audio.T,
                 dtype=torch.float32
