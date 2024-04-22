@@ -12,14 +12,14 @@ defaults:
 
 # data
 train_loader:
-  batch_size: 5
-  num_workers: 1
+  batch_size: 10
+  num_workers: 8
   persistent_workers: True
   shuffle: True
   drop_last: True
 val_loader:
-  batch_size: 5
-  num_workers: 1
+  batch_size: 10
+  num_workers: 8
   persistent_workers: True
   shuffle: False
   drop_last: False
@@ -27,7 +27,7 @@ val_loader:
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 2e-4
+  lr: 8e-4
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -50,7 +50,7 @@ logger:
 
 trainer:
   fast_dev_run: False
-  max_epochs: 450
+  max_epochs: 1000
   check_val_every_n_epoch: 1
   num_sanity_val_steps: 5
   log_every_n_steps: 100
