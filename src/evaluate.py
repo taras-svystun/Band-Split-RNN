@@ -68,6 +68,7 @@ class EvaluateProgram:
         # iterate over checkpoints
         for ckpt_path in self.ckpt_dir.glob("*.ckpt"):
             logger.info(f"Evaluating checkpoint - {ckpt_path.name}")
+            print(f"Evaluating checkpoint - {ckpt_path.name}")
             state_dict = load_pl_state_dict(ckpt_path, device=self.device)
             _ = self.sep.model[1].load_state_dict(state_dict, strict=True)
             metrics = self.run_one_ckpt()
