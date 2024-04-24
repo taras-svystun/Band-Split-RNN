@@ -22,7 +22,9 @@ from utils.utils_inference import load_pl_state_dict
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
-    return .97 ** epoch
+    if epoch == 0:
+        return .25
+    return .99 ** epoch
 
 
 def initialize_loaders(cfg: DictConfig) -> tp.Tuple[DataLoader, DataLoader]:
