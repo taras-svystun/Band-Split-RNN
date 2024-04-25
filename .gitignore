@@ -1,4 +1,4 @@
-# **/*.ipynb_checkpoints/
+*.ipynb_checkpoints/
 **/*logs/
 *.pyc
 **/*.ipynb
@@ -7,3 +7,5 @@
 **/*.pt
 stems_dataset/
 wav_dataset/
+venv/
+
