@@ -14,11 +14,12 @@ from tqdm import tqdm
 print(torch.__version__, torchaudio.__version__)
 
 # root = './musdb18hq_augmented/valid/'
-root = '../../datasets/musdb18hq_augmented/'
+os.chdir('~/datasets/musdb18hq_augmented/')
+# root = './'
 # os.listdir(root)
 
 
-for folder in tqdm(sorted(glob(f'{root}train/*'))):
+for folder in tqdm(sorted(glob(f'./train/*'))):
     if 'ipynb' in folder:
         pass
     else:
