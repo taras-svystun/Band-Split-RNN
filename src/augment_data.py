@@ -14,7 +14,7 @@ from tqdm import tqdm
 print(torch.__version__, torchaudio.__version__)
 
 # root = './musdb18hq_augmented/valid/'
-root = './musdb18hq_augmented/'
+root = '../../datasets/musdb18hq_augmented/'
 # os.listdir(root)
 
 
