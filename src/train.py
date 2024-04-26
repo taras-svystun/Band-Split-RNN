@@ -22,9 +22,7 @@ from utils.utils_inference import load_pl_state_dict
 log = logging.getLogger(__name__)
 
 def lr_lambda(epoch):
-    if epoch == 0:
-        return .25
-    return .99 ** epoch
+    return .995 ** epoch
 
 
 def initialize_loaders(cfg: DictConfig) -> tp.Tuple[DataLoader, DataLoader]:
@@ -92,7 +90,7 @@ def initialize_model(
     model = BandSplitRNN(
         **cfg.model
     )
-    model.load_state_dict(torch.load("./saved_models/vocals/vocals_v2.pt"))
+    model.load_state_dict(torch.load("./saved_models/vocals/my_best_vocal_weights.pt"))
     print('Loaded model from checkpoint successfully!')
     # initialize optimizer
     if hasattr(cfg, 'opt'):
@@ -167,10 +165,10 @@ def my_app(cfg: DictConfig) -> None:
     log.info("Initializing model, optimizer, scheduler.")
     model, opt, sch = initialize_model(cfg)
 
-    if hasattr(cfg, 'ckpt_path'):
-        state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
-        model.load_state_dict(state_dict, strict=True)
-        print("Loaded .ckpt checkpoint model")
+    # if hasattr(cfg, 'ckpt_path'):
+    #     state_dict = load_pl_state_dict(cfg.ckpt_path, device= 'cuda' if torch.cuda.is_available() else 'cpu')
+    #     model.load_state_dict(state_dict, strict=True)
+    #     print("Loaded .ckpt checkpoint model")
 
     log.info("Initializing Lightning logger and callbacks.")
     logger, callbacks = initialize_utils(cfg)
@@ -195,8 +193,8 @@ def my_app(cfg: DictConfig) -> None:
             plmodel,
             train_dataloaders=train_loader,
             val_dataloaders=val_loader,
-            ckpt_path=None
-            # ckpt_path=cfg.ckpt_path
+            # ckpt_path=None
+            ckpt_path=cfg.ckpt_path
         )
     except Exception as e:
         log.error(traceback.format_exc())
