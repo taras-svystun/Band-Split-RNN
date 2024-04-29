@@ -1,8 +1,10 @@
-## Listen to vocal extraction
+<!-- ## Listen to vocal extraction -->
+Below are the examples of vocals source separation produced by 4 models.
 
- - [Code](https://github.com/PolyAI-LDN/pheme)
- - [Demo](https://huggingface.co/spaces/PolyAI/pheme)
- - [Paper](https://arxiv.org/pdf/2401.02839.pdf)
+
+ - [Code](https://github.com/taras-svystun/Band-Split-RNN)
+ <!-- - [Demo](https://huggingface.co/spaces/PolyAI/pheme) -->
+ <!-- - [Paper](https://arxiv.org/pdf/2401.02839.pdf) -->
 
 
 
@@ -13,13 +15,13 @@
 
 | Hi de Hi, Hi de Ho    | <audio src="s/sample_Kool_and_the_gang_28_sec.wav" type="audio/wav" controls preload></audio>  | <audio src="s/Amantur_model_vocals_Kool_and_the_gang.wav"  type="audio/wav" controls preload></audio>  | <audio src="s/my_model_vocals_Kool_and_the_gang.wav" type="audio/wav" controls preload></audio> | <audio src="s/demucs_model_vocals_Kool_and_the_gang.mp3" type="audio/wav" controls preload></audio>  | <audio src="s/mdx_model_vocals_Kool_and_the_gang.mp3" type="audio/wav" controls preload></audio> |
 
-| 420 Louis             | <audio src="s/sample_420_Louis_14_sec.wav" type="audio/wav" controls preload></audio>          | <audio src="s/Amantur_model_vocals_420_Louis.wav"           type="audio/wav" controls preload></audio>  | <audio src="s/my_model_vocals_420_Louis.wav" type="audio/wav" controls preload></audio>         | <audio src="s/demucs_model_vocals_420_Louis.mp3" type="audio/wav" controls preload></audio>        s  | <audio src="s/mdx_model_vocals_420_Louis.mp3" type="audio/wav" controls preload></audio> |
+| 420 Louis             | <audio src="s/sample_420_Louis_14_sec.wav" type="audio/wav" controls preload></audio>          | <audio src="s/Amantur_model_vocals_420_Louis.wav"           type="audio/wav" controls preload></audio>  | <audio src="s/my_model_vocals_420_Louis.wav" type="audio/wav" controls preload></audio>         | <audio src="s/demucs_model_vocals_420_Louis.mp3" type="audio/wav" controls preload></audio>           | <audio src="s/mdx_model_vocals_420_Louis.mp3" type="audio/wav" controls preload></audio> |
 
 
 
 
 
-### Inference speed with Triton-LLM (RTFs, lower is better) for short and long sentences
+## Models summary
 
 | Model              | SDR, dB  |
 | ------------------ | ------- |
