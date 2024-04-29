@@ -11,6 +11,13 @@
 | Roots, Rock, Reggae    | <audio src="s/sample_Roots_Rock_Reggae_15_sec.wav" type="audio/wav" controls preload></audio> | <audio src="s/Amantur_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/my_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/demucs_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> | <audio src="s/mdx_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> |
 
 
+| Roots, Rock, Reggae    | <audio src="s/sample_Roots_Rock_Reggae_15_sec.wav" type="audio/wav" controls preload></audio> | <audio src="s/Amantur_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/my_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/demucs_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> | <audio src="s/mdx_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> |
+
+
+
+| Roots, Rock, Reggae    | <audio src="s/sample_Roots_Rock_Reggae_15_sec.wav" type="audio/wav" controls preload></audio> | <audio src="s/Amantur_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/my_model_vocals_Roots_Rock_Reggae.wav" type="audio/wav" controls preload></audio> | <audio src="s/demucs_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> | <audio src="s/mdx_model_vocals_Roots_Rock_Reggae.mp3" type="audio/wav" controls preload></audio> |
+
+
 
 
 
