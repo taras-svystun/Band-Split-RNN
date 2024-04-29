@@ -1,7 +1,11 @@
-**/*.ipynb_checkpoints/
+*.ipynb_checkpoints/
 **/*logs/
 *.pyc
 **/*.ipynb
 .DS_Store
 .idea/
 **/*.pt
+stems_dataset/
+wav_dataset/
+venv/
+

@@ -5,6 +5,7 @@ import torch.nn as nn
 import pytorch_lightning as pl
 from torch.optim import Optimizer, lr_scheduler
 from omegaconf import DictConfig
+from sys import exit
 
 
 class PLModel(pl.LightningModule):
@@ -52,9 +53,10 @@ class PLModel(pl.LightningModule):
 
         # logging
         for k in loss_dict:
-            self.log(f"train/{k}", loss_dict[k].detach(), on_epoch=True, on_step=False)
-        self.log("train/loss", loss.detach(), on_epoch=True, on_step=False)
-        self.log("train/usdr", usdr.detach(), on_epoch=True, on_step=False)
+            self.log(f"train/{k}", loss_dict[k].detach(), on_epoch=True, on_step=False, sync_dist=True)
+
+        self.log("train/loss", loss.detach(), on_epoch=True, on_step=False, sync_dist=True)
+        self.log("train/usdr", usdr.detach(), on_epoch=True, on_step=False, sync_dist=True)
 
         return loss
 
@@ -64,9 +66,10 @@ class PLModel(pl.LightningModule):
         loss, loss_dict, usdr = self.step(batch)
         # logging
         for k in loss_dict:
-            self.log(f"val/{k}", loss_dict[k])
-        self.log("val/loss", loss, prog_bar=True)
-        self.log("val/usdr", usdr, prog_bar=True)
+            self.log(f"val/{k}", loss_dict[k], sync_dist=True)
+
+        self.log("val/loss", loss, prog_bar=True, sync_dist=True)
+        self.log("val/usdr", usdr, prog_bar=True, sync_dist=True)
 
         return loss
 
@@ -77,11 +80,13 @@ class PLModel(pl.LightningModule):
         Input shape: [batch_size, n_sources, n_channels, time]
         """
         # augmentations
+
         batchT = self.augmentations(batchT)
 
         # STFT
         batchS = self.featurizer(batchT)
         mixS, tgtS = batchS[:, 0], batchS[:, 1]
+        
 
         # apply model
         predS = self.model(mixS)

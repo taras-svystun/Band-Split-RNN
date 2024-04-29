@@ -12,20 +12,22 @@ defaults:
 
 # data
 train_loader:
-  batch_size: 4
+  batch_size: 5
   num_workers: 8
+  persistent_workers: True
   shuffle: True
   drop_last: True
 val_loader:
-  batch_size: 4
+  batch_size: 5
   num_workers: 8
+  persistent_workers: True
   shuffle: False
   drop_last: False
 
 # optimization
 opt:
   _target_: torch.optim.Adam
-  lr: 1e-3
+  lr: 8e-4
 # sch:
 #   _target_: torch.optim.lr_scheduler.StepLR
 #   step_size: 2
@@ -33,11 +35,17 @@ opt:
 
 # torch.optim.lr_scheduler.LambdaLR
 sch:
-    warmup_step: 10
-    alpha: 0.1
-    gamma: 0.98
+    # warmup_step: 0
+    # alpha: 0.1
+    # gamma: 0.95
 
-ckpt_path: null
+# ckpt_path: logs/bandsplitrnn/2024-04-22_19-22/weights/epoch70-val_usdr7.63.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-23_05-45/weights/epoch01-val_usdr7.65.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-23_06-04/weights/epoch01-val_usdr7.66.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-23_06-43/weights/epoch26-val_usdr7.77.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-23_10-54/weights/epoch17-val_usdr8.56.ckpt
+# ckpt_path: logs/bandsplitrnn/2024-04-23_14-00/weights/epoch12-val_usdr9.10.ckpt
+ckpt_path: logs/bandsplitrnn/final_valid_61_epochs/weights/epoch29-val_usdr9.51.ckpt
 
 logger:
   _target_: pytorch_lightning.loggers.TensorBoardLogger

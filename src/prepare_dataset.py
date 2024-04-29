@@ -43,7 +43,7 @@ parser.add_argument(
     '--sad-cfg-path',
     type=str,
     required=False,
-    default="./conf/sad/cropgainmix.yaml",
+    default="./conf/sad/default.yaml",
     help="Path to Source Activity Detection config file"
 )
 parser.add_argument(
@@ -82,6 +82,8 @@ def run_program(
     with open(file_path, 'w') as wf:
         for track in tqdm(db):
             # get audio data and transform to torch.Tensor
+            # print(track.__class__)
+            # print(track.name)
             y = torch.tensor(
                 track.targets[target].audio.T,
                 dtype=torch.float32
@@ -111,6 +113,7 @@ def main(
         download=False,
         is_wav=True,
     )
+    
     # initialize Source Activity Detector
     sad_cfg = OmegaConf.load(sad_cfg_path)
     sad = SAD(**sad_cfg)

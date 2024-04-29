@@ -1,11 +1,16 @@
 import random
 import typing as tp
 from pathlib import Path
+import sys
 
 import torch
+import math
 from torch.utils.data import Dataset
 import torchaudio
+import torchaudio.transforms as T
+import torch.nn.functional as F
 from tqdm import tqdm
+from glob import glob
 
 
 class SourceSeparationDataset(Dataset):
@@ -27,7 +32,11 @@ class SourceSeparationDataset(Dataset):
             sr: int = 44100,
             silent_prob: float = 0.1,
             mix_prob: float = 0.1,
+            remixing_ratio: float = 0.25,
             mix_tgt_too: bool = False,
+            pitch_shift_prob: float = 0.,
+            time_shift_prob: float = 0.,
+            time_stretch_prob: float = 0.
     ):
         self.file_dir = Path(file_dir)
         self.is_training = is_training
@@ -49,7 +58,12 @@ class SourceSeparationDataset(Dataset):
         # augmentations
         self.silent_prob = silent_prob
         self.mix_prob = mix_prob
+        self.remixing_ratio = remixing_ratio
+        self.time_shift_prob = time_shift_prob
+        
         self.mix_tgt_too = mix_tgt_too
+        if not self.mix_tgt_too:
+            self.TARGETS.discard(self.target)
 
     def get_filelist(self) -> tp.List[tp.Tuple[str, tp.Tuple[int, int]]]:
         filename2label = {}
@@ -127,17 +141,9 @@ class SourceSeparationDataset(Dataset):
         """
         Creating new mixture and new target from target file and random multiple sources
         """
-        # decide how many sources to mix
-        if not self.mix_tgt_too:
-            self.TARGETS.discard(self.target)
-        n_sources = random.randrange(1, len(self.TARGETS) + 1)
-        # decide which sources to mix
-        targets_to_add = random.sample(
-            self.TARGETS, n_sources
-        )
         # create new mix segment
         mix_segment = tgt_segment.clone()
-        for target in targets_to_add:
+        for target in self.TARGETS:
             # get random file to mix source from
             fp_template_to_add, indices_to_add = random.choice(self.filelist)
             segment_to_add = self.load_file(
@@ -149,6 +155,89 @@ class SourceSeparationDataset(Dataset):
         return (
             mix_segment, tgt_segment
         )
+    
+    def get_speech_filelist(self):
+        return [filename for filename in glob(str(self.file_dir / '../LibriSpeech/**/*.wav'), recursive=True)]
+    
+    def add_noise(
+        self, waveform: torch.Tensor, noise: torch.Tensor, snr: torch.Tensor, lengths: tp.Optional[torch.Tensor] = None
+    ) -> torch.Tensor:
+        """
+        Copied as is from newer torch version.
+        """
+
+        if not (waveform.ndim - 1 == noise.ndim - 1 == snr.ndim and (lengths is None or lengths.ndim == snr.ndim)):
+            raise ValueError("Input leading dimensions don't match.")
+
+        L = waveform.size(-1)
+
+        if L != noise.size(-1):
+            raise ValueError(f"Length dimensions of waveform and noise don't match (got {L} and {noise.size(-1)}).")
+
+        # compute scale
+        if lengths is not None:
+            mask = torch.arange(0, L, device=lengths.device).expand(waveform.shape) < lengths.unsqueeze(
+                -1
+            )  # (*, L) < (*, 1) = (*, L)
+            masked_waveform = waveform * mask
+            masked_noise = noise * mask
+        else:
+            masked_waveform = waveform
+            masked_noise = noise
+
+        energy_signal = torch.linalg.vector_norm(masked_waveform, ord=2, dim=-1) ** 2  + 1e-6 # (*,)
+        energy_noise = torch.linalg.vector_norm(masked_noise, ord=2, dim=-1) ** 2  + 1e-6 # (*,)
+        original_snr_db = 10 * (torch.log10(energy_signal) - torch.log10(energy_noise))
+        scale = 10 ** ((original_snr_db - snr) / 20.0)  # (*,)
+
+        # scale noise
+        scaled_noise = scale.unsqueeze(-1) * noise  # (*, 1) * (*, L) = (*, L)        
+
+        return waveform + scaled_noise  # (*, L)
+
+    def remix(
+        self,
+        mix_segment: torch.Tensor
+    ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
+        vocal_lengths = 0
+        vocal_samples = []
+        if not hasattr(self, "speech_filelist"):
+            self.speech_filelist = self.get_speech_filelist()
+            
+        
+        while vocal_lengths < mix_segment.shape[1]:
+            vocal_sample_filename = random.choice(self.speech_filelist)
+            assert Path(vocal_sample_filename).is_file(), f"There is no such file - {vocal_sample_filename}."
+
+            vocal_sample, sr = torchaudio.load(vocal_sample_filename, channels_first=True)
+            assert sr == self.sr, f"Sampling rate should be equal {self.sr}, not {sr}."
+            if self.is_mono:
+                vocal_sample = torch.mean(vocal_sample, dim=0, keepdim=True)
+            
+            max_norm = vocal_sample.abs().max()
+            vocal_sample /= max_norm
+
+            vocal_samples.append(vocal_sample)
+            vocal_lengths += vocal_sample.shape[1]
+
+        vocals = torch.cat(vocal_samples, 1)[:, :mix_segment.shape[1]]
+
+        SNRs = torch.tensor([random.uniform(-5, 15)] * 2)
+        
+        mix_segment = self.add_noise(vocals, mix_segment, SNRs)
+        max_norm = mix_segment.abs().max()
+        mix_segment /= max_norm
+        
+        return (mix_segment, vocals)
+    
+    def pitch_shift(self, mix, tgt):
+        n_steps = random.uniform(-3, 3)
+        pitch_shift = T.PitchShift(44_100, n_steps)
+        return pitch_shift(mix), pitch_shift(tgt)
+
+    def time_shift(self, mix, tgt):
+        offset = (random.randint(-44100, 44100)) * 2
+        return torch.roll(mix, offset, 1), torch.roll(tgt, offset, 1)
 
     def augment(
             self,
@@ -156,17 +245,24 @@ class SourceSeparationDataset(Dataset):
             tgt_segment: torch.Tensor
     ) -> tp.Tuple[torch.Tensor, torch.Tensor]:
         if self.is_training:
-            # dropping target
-            if random.random() < self.silent_prob:
-                mix_segment, tgt_segment = self.imitate_silent_segments(
-                    mix_segment, tgt_segment
-                )
-            # mixing with other sources
+
             if random.random() < self.mix_prob:
                 mix_segment, tgt_segment = self.mix_segments(
                     tgt_segment
                 )
+
+            if random.random() < self.remixing_ratio:
+                mix_segment, tgt_segment = self.remix(
+                    mix_segment - tgt_segment
+                )
+            
+            if random.random() < self.time_shift_prob:
+                mix_segment, tgt_segment = self.time_shift(
+                    mix_segment, tgt_segment
+                )
+            
         return mix_segment, tgt_segment
+
 
     def __getitem__(
             self,
@@ -180,7 +276,7 @@ class SourceSeparationDataset(Dataset):
             mix_segment, tgt_segment = self.filelist[index]
         else:
             mix_segment, tgt_segment = self.load_files(*self.filelist[index])
-
+            
         # augmentations related to mixing/dropping sources
         mix_segment, tgt_segment = self.augment(mix_segment, tgt_segment)
 
